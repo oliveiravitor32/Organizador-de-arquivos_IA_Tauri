@@ -119,7 +119,7 @@ A interface não acessa diretamente:
 
 - Banco de dados
 - Sistema de arquivos
-- Ollama
+- Serviço de IA
 
 Toda comunicação ocorre através do Tauri.
 
