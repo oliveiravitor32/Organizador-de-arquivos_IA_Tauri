@@ -84,6 +84,7 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 - [arquitetura/esquema-sql.md](arquitetura/esquema-sql.md) — esquema físico SQLite (fonte única).
 - [arquitetura/pipeline-ia.md](arquitetura/pipeline-ia.md) — arquitetura técnica da IA.
 - [arquitetura/estrutura-do-projeto.md](arquitetura/estrutura-do-projeto.md) — organização do código.
+- [arquitetura/frontend-ui.md](arquitetura/frontend-ui.md) — fundações do frontend (tokens, temas, estados).
 
 ---
 
@@ -104,6 +105,7 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 | [ADR-009](decisoes/ADR-009-motor-de-sugestoes-orientado-a-conhecimento.md) | Motor de Sugestões Orientado a Conhecimento |
 | [ADR-010](decisoes/ADR-010-estrategia-de-snapshot-e-rollback.md) | Estratégia de Snapshot e Rollback |
 | [ADR-011](decisoes/ADR-011-tauri-v2-sqlx-vite.md) | Tauri v2, sqlx e Vite como Base Técnica |
+| [ADR-012](decisoes/ADR-012-ui-shadcn-tailwind.md) | shadcn/ui + Tailwind como Base de UI |
 
 ---
 

@@ -75,6 +75,7 @@ Passos concretos, em ordem de execução, marcáveis.
 - [ ] CAs cobertos por teste
 - [ ] Contratos (commands/events) respeitados
 - [ ] Sem violação das regras inegociáveis (CLAUDE.md)
+- [ ] UI usa só tokens de tema (sem cor crua / classe de cor direta do Tailwind)
 - [ ] Suíte passa offline e determinística
 
 ## Verificação

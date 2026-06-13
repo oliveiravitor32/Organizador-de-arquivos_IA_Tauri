@@ -13,6 +13,8 @@ Nenhum UC funcional. O marco é infraestrutura que habilita todos os UCs seguint
 - [ADR-001](../../../docs/decisoes/ADR-001-react.md) — React no frontend.
 - [ADR-002](../../../docs/decisoes/ADR-002-tauri.md) — Tauri como plataforma desktop.
 - [ADR-005](../../../docs/decisoes/ADR-005-sqlite-persistencia.md) — SQLite como persistência.
+- [ADR-012](../../../docs/decisoes/ADR-012-ui-shadcn-tailwind.md) — shadcn/ui + Tailwind como base de UI.
+- Fundações de frontend em [frontend-ui.md](../../../docs/arquitetura/frontend-ui.md) (tokens, temas, estados).
 - Regras inegociáveis do `CLAUDE.md` valem desde já (especialmente: apenas repositórios acessam o banco).
 
 ## Contratos e dados

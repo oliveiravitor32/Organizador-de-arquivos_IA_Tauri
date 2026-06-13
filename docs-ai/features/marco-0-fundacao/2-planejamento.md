@@ -26,8 +26,9 @@ Resolvendo as questões em aberto da pesquisa:
 5. **Tipo de erro estruturado** (`error.rs`) com `code`, `message`, `details`, serializável ao frontend. *(dep: 2)*
 6. **Command de teste `ping`** retornando versão do app; registrar na fronteira. *(dep: 2, 5)*
 7. **Evento de teste** emitido pelo backend e recebido no frontend; wrappers em `src/ipc/`. *(dep: 6)*
-8. **Tela inicial vazia** que chama `ping` e escuta o evento, exibindo o resultado. *(dep: 7)*
-9. **Suíte de testes base:** 1 unidade (erro estruturado), 1 integração (migração cria tabelas em SQLite efêmero), estrutura `tests/e2e` pronta. *(dep: 4, 5)*
+8. **Base de UI** — instalar Tailwind + shadcn/ui; `styles/globals.css` com os tokens dos temas claro/escuro (preto suave / neutro claro); alternador de tema com persistência; `components/ui/` criado. *(dep: 2, ADR-012, frontend-ui.md)*
+9. **Tela inicial vazia** que chama `ping` e escuta o evento, exibindo o resultado, já respeitando tokens e estados. *(dep: 7, 8)*
+10. **Suíte de testes base:** 1 unidade (erro estruturado), 1 integração (migração cria tabelas em SQLite efêmero), estrutura `tests/e2e` pronta. *(dep: 4, 5)*
 
 ## Pontos de integração
 
