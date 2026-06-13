@@ -4,7 +4,7 @@ pub mod db;
 pub mod error;
 pub mod events;
 
-use tauri::{Emitter, Manager};
+use tauri::Manager;
 
 use crate::core::state::AppState;
 
@@ -36,17 +36,12 @@ pub fn run() {
 
             app.manage(AppState { db: pool });
 
-            // Evento de teste: valida a ponte backend -> frontend (Marco 0).
-            let _ = handle.emit(
-                events::READY,
-                events::ReadyPayload {
-                    message: "Backend pronto".to_string(),
-                },
-            );
-
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![commands::ping])
+        .invoke_handler(tauri::generate_handler![
+            commands::ping,
+            commands::announce_ready
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

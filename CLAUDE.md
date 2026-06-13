@@ -85,3 +85,4 @@ Em caso de divergência, estes documentos têm autoridade final:
 - Apenas repositórios acessam o SQLite; serviços consomem repositórios.
 - **UI 100% desacoplada de tema:** componentes usam só tokens semânticos (`bg-background`, `text-foreground`…), nunca cor crua ou classe de cor direta do Tailwind (`bg-neutral-900`). Vale para toda feature. (ADR-012, `docs/arquitetura/frontend-ui.md`)
 - **Todo CA vira teste:** nenhuma feature fecha sem teste para cada Critério de Aceitação; testes unitários seguem `docs/requisitos/convencoes-de-teste.md` (Vitest+RTL no front, `#[cfg(test)]`+mockall no Rust). (ADR-014)
+- **Todo bug vira teste de regressão:** ao corrigir qualquer bug (encontrado por você ou apontado pelo usuário), **pergunte ao usuário antes de gerar o teste**, informando uma **recomendação** (deve ou não gerar, e por quê). Só gere o teste após confirmação. (ver `docs/requisitos/convencoes-de-teste.md`)

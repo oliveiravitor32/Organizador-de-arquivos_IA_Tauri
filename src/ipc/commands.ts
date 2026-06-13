@@ -11,3 +11,8 @@ export interface AppError {
 export function ping(): Promise<string> {
   return invoke<string>("ping");
 }
+
+/** Pede ao backend que emita o evento de prontidão (após o listener existir). */
+export function announceReady(): Promise<void> {
+  return invoke<void>("announce_ready");
+}

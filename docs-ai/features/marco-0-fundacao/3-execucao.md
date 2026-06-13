@@ -24,10 +24,10 @@ Derivado de `2-planejamento.md`. **Executado.**
 
 ## Definition of Done
 
-- [~] CA-1: app abre e renderiza tela inicial. _Código pronto; **verificação em runtime via `npm run tauri dev` pendente** (não executado nesta sessão)._
+- [x] CA-1: app abre e renderiza tela inicial. _Confirmado em runtime (`tauri dev`): tela exibe título + "Versão: 0.1.0"._
 - [x] CA-2: migração cria todas as tabelas (teste de integração ✅).
-- [~] CA-3: `ping` responde ao frontend. _Implementado; pendente verificação em runtime._
-- [~] CA-4: evento do backend chega ao frontend. _Implementado; pendente verificação em runtime._
+- [x] CA-3: `ping` responde ao frontend. _Confirmado: versão 0.1.0 exibida._
+- [x] CA-4: evento do backend chega ao frontend. _Bug de corrida corrigido (listener antes de `announce_ready`) + **teste de regressão** (`src/App.test.tsx`). Re-teste em runtime recomendado para confirmação visual._
 - [x] CA-5: suíte roda offline e passa (frontend 1/1, backend 2/2; `npm run build` e `tsc` ok).
 - [x] Nenhuma violação das regras inegociáveis (`CLAUDE.md`).
 - [x] Acesso ao SQLite isolado no módulo `db/`.
@@ -50,4 +50,7 @@ Implementado sobre o scaffold pré-existente. Backend: módulos `commands/`, `ev
 - **`mockall`:** não adicionado (sem trait a mockar no M0); entra no M2 com a abstração do Serviço de IA.
 - **`cargo-llvm-cov`:** referenciado no CI; instalação local pendente.
 
-Status: **funcional, testes verdes** — falta apenas a verificação em runtime (`tauri dev`) de CA-1/CA-3/CA-4.
+### Correção pós-runtime (CA-4)
+A 1ª execução em `tauri dev` confirmou CA-1 e CA-3 (título + "Versão: 0.1.0"), mas não exibiu "Backend pronto": o backend emitia `app://ready` no `setup`, antes de o frontend registrar o listener (corrida). Corrigido com o command `announce_ready`, chamado pelo frontend após registrar o listener. Adicionado teste de regressão `src/App.test.tsx` (ordenação listener→announce + render da mensagem) — política "todo bug vira teste" (ver convencoes-de-teste.md).
+
+Status: **funcional, testes verdes (frontend 3/3, backend 2/2)** — CA-1/CA-3 confirmados em runtime; CA-4 corrigido e coberto por teste (confirmação visual em runtime recomendada).

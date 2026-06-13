@@ -145,6 +145,22 @@ Nenhuma feature é considerada concluída sem seus testes e sem o mapeamento CA�
 
 ---
 
+# Testes de Regressão (bugs)
+
+Todo bug corrigido deve virar um teste que o impeça de voltar.
+
+Fluxo obrigatório ao corrigir um bug (encontrado durante o trabalho ou apontado pelo usuário):
+
+1. Corrigir o bug.
+2. **Perguntar ao usuário, com recomendação**, se deve gerar um teste de regressão.
+   - A recomendação avalia se o bug é testável de forma determinística e se o teste agrega valor (ex.: lógica/contrato/ordenação) ou não (ex.: ajuste visual trivial, config).
+3. Se confirmado, escrever o teste que **falha sem a correção e passa com ela**, seguindo as convenções deste documento.
+4. O teste referencia o bug no nome/descrição (ex.: `nao_emite_ready_antes_do_listener`).
+
+Não fechar a correção sem passar por este fluxo.
+
+---
+
 # Critérios de Aceitação
 
 - CA-001: testes unitários de backend ficam inline (`#[cfg(test)]`); integração em `tests/`.

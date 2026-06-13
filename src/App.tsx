@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
+import type { UnlistenFn } from "@tauri-apps/api/event";
+
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useTranslations } from "@/i18n";
+import { announceReady } from "@/ipc/commands";
 import { onReady } from "@/ipc/events";
 import { usePing } from "@/ipc/queries";
 
@@ -11,10 +14,13 @@ function App() {
   const [readyMessage, setReadyMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const unlisten = onReady((payload) => setReadyMessage(payload.message));
-    return () => {
-      unlisten.then((fn) => fn());
-    };
+    let unlisten: UnlistenFn | undefined;
+    void (async () => {
+      // Registra o listener antes de pedir a emissão, garantindo a entrega.
+      unlisten = await onReady((payload) => setReadyMessage(payload.message));
+      await announceReady();
+    })();
+    return () => unlisten?.();
   }, []);
 
   return (
