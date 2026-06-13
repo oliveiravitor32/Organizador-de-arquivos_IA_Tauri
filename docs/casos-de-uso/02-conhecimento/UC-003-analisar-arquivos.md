@@ -535,14 +535,14 @@ Pré-requisitos:
 
 Subprocessos:
 
-- Extrair Entidades
-- Gerar Embeddings
-- Descobrir Relações
-- Construir Clusters
+- UC-008 Extrair Entidades
+- UC-009 Gerar Embeddings
+- UC-010 Descobrir Relações
+- UC-011 Construir Clusters
 
 Próximo passo:
 
-- Construir Grafo
+- UC-004 Construir Grafo
 
 ---
 

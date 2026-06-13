@@ -591,11 +591,21 @@ Detalhes da operação.
 
 Estado salvo antes de alterações.
 
+Conforme ADR-010, o snapshot é lógico: registra o diário de operações reversíveis, e não uma cópia do conteúdo dos arquivos.
+
 ## Campos
 
 id
 
 UUID
+
+---
+
+execution_id
+
+TEXT
+
+Identificador da execução associada (UC-006).
 
 ---
 
@@ -615,6 +625,8 @@ TEXT
 
 Histórico de alterações.
 
+Cada operação carrega informação suficiente para gerar sua operação inversa de forma determinística (ADR-010).
+
 ## Campos
 
 id
@@ -626,6 +638,24 @@ UUID
 snapshot_id
 
 FK → snapshots
+
+---
+
+execution_id
+
+TEXT
+
+Identificador da execução que originou a operação.
+
+---
+
+sequence
+
+INTEGER
+
+Ordem de aplicação dentro da execução.
+
+Utilizada para reverter operações em ordem inversa.
 
 ---
 
@@ -647,9 +677,32 @@ TEXT
 
 ---
 
+reversal_state
+
+TEXT
+
+Estado da operação no ciclo de execução e reversão.
+
+Valores:
+
+- planned
+- applied
+- reverted
+- failed
+
+---
+
 executed_at
 
 DATETIME
+
+---
+
+reverted_at
+
+DATETIME
+
+Data da reversão, quando aplicável.
 
 ---
 
@@ -672,6 +725,12 @@ relationships(target_entity_id)
 clusters(name)
 
 suggestions(status)
+
+snapshots(execution_id)
+
+operations(snapshot_id)
+
+operations(execution_id)
 
 ---
 

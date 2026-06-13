@@ -566,15 +566,15 @@ O sistema deve monitorar:
 
 Pré-requisitos:
 
-- Escanear Diretório
-- Indexar Arquivos
-- Analisar Arquivos
+- UC-001 Escanear Diretório
+- UC-002 Indexar Arquivos
+- UC-003 Analisar Arquivos
 
 Consumidores:
 
-- Gerar Sugestões
-- Busca Semântica
-- Explorar Contexto
+- UC-005 Gerar Sugestões
+- UC-014 Busca Semântica
+- UC-015 Explorar Contexto
 
 ---
 
