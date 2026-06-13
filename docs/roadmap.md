@@ -214,7 +214,7 @@ Decisões técnicas deliberadamente adiadas para o momento de cada marco. Antes 
 | Marco | Decisões a definir antes de codar |
 | --- | --- |
 | M0 | ✅ nenhuma — base já decidida (ADR-011 a ADR-015) |
-| M1 | bibliotecas de extração (PDF/DOCX/XLSX em Rust); motor de OCR (ex.: Tesseract) |
+| M1 | ✅ bibliotecas de extração: `pdf-extract` + `docx-rs` + `calamine` (ADR-016); OCR adiado para M6 (ADR-017) |
 | M2 | estratégia de **busca vetorial / similaridade** (cosseno em memória, `sqlite-vss`, ou lib); parâmetros de clusterização |
 | M3 | heurísticas/limiares do motor de sugestões |
 | M4 | (sem pendência conhecida — snapshot/rollback já em ADR-010) |

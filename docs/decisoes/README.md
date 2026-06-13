@@ -67,6 +67,8 @@ ADR-010-estrategia-de-snapshot-e-rollback.md
 | ADR-013 | Configuração em arquivo e observabilidade local | Aceito |
 | ADR-014 | Ferramentas de teste | Aceito |
 | ADR-015 | Estado do frontend (Zustand + TanStack Query) | Aceito |
+| ADR-016 | Bibliotecas de extração de conteúdo (M1) | Aceito |
+| ADR-017 | OCR para imagens adiado para M6 | Aceito |
 
 ---
 

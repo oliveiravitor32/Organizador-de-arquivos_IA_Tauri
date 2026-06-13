@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Descoberta } from "@/features/descoberta/Descoberta";
 import { useTranslations } from "@/i18n";
 import { announceReady } from "@/ipc/commands";
 import { onReady } from "@/ipc/events";
@@ -42,6 +43,8 @@ function App() {
       {readyMessage && (
         <p className="text-sm text-muted-foreground">{readyMessage}</p>
       )}
+
+      <Descoberta />
     </main>
   );
 }

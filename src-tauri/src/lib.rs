@@ -1,8 +1,10 @@
 pub mod commands;
 pub mod core;
 pub mod db;
+pub mod domain;
 pub mod error;
 pub mod events;
+pub mod services;
 
 use tauri::Manager;
 
@@ -12,6 +14,7 @@ use crate::core::state::AppState;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             let handle = app.handle().clone();
 
@@ -34,13 +37,16 @@ pub fn run() {
                 pool
             });
 
-            app.manage(AppState { db: pool });
+            app.manage(AppState::new(pool));
 
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             commands::ping,
-            commands::announce_ready
+            commands::announce_ready,
+            commands::descoberta::escanear_diretorio,
+            commands::descoberta::indexar_arquivos,
+            commands::descoberta::cancelar_operacao,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

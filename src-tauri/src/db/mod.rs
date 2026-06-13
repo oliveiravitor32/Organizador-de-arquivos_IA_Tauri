@@ -1,7 +1,6 @@
 //! Acesso ao SQLite via sqlx (ADR-005, ADR-011).
-//!
-//! Apenas este módulo abre conexões; serviços futuros consomem repositórios
-//! construídos sobre o pool (ver docs/arquitetura/estrutura-do-projeto.md).
+
+pub mod repositories;
 
 use std::path::Path;
 

@@ -1,7 +1,6 @@
 //! Commands expostos ao frontend (ver docs/arquitetura/contratos-tauri.md).
-//!
-//! No Marco 0 há apenas commands de teste, que validam a fronteira
-//! React <-> Rust. Os commands de domínio chegam nos marcos seguintes.
+
+pub mod descoberta;
 
 use tauri::{AppHandle, Emitter};
 

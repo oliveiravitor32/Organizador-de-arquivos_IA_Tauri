@@ -110,11 +110,39 @@ Commands e events são mockados via `vi.mock` sobre `src/ipc/` — o componente 
 
 ---
 
-# Cobertura
+# Cobertura por Camada
+
+A regra "todo CA vira teste" garante cobertura do comportamento externo. Mas CAs não exercitam diretamente toda a lógica interna — por isso existem as expectativas abaixo por camada.
+
+## Backend (Rust)
+
+| Camada | O que testar | Nível |
+| --- | --- | --- |
+| **Repositórios** (`db/repositories/`) | Cada método público: insert, update, select, upsert, count | Integração (SQLite em memória) |
+| **Serviços sem AppHandle** | Cada função pública e privada com lógica real (cálculos, filtros, transformações) | Unitário |
+| **Serviços com AppHandle** | Lógica extraível em funções puras é testada isoladamente; o método principal é coberto por integração | Unitário (lógica pura) + Integração |
+| **Domain models com lógica** | Métodos como `as_str()`, `From`, validações — não testar structs sem lógica | Unitário inline |
+| **Estado compartilhado** (`core/state.rs`) | Cada método público do AppState | Unitário |
+| **Extratores** | Caminho feliz + arquivo inválido/corrompido para cada formato | Unitário |
+
+**Não testar:** structs puramente de dados (sem impl), constantes, boilerplate de `new()` triviais.
+
+## Frontend (TypeScript/React)
+
+| Camada | O que testar | Nível |
+| --- | --- | --- |
+| **Stores Zustand** | Cada action em isolamento; estado inicial; reset | Unitário (`*.test.ts`) |
+| **Componentes** | Cada estado visual (idle, loading, success, error, cancelled) e cada interação relevante | Componente (RTL) |
+| **Hooks customizados** | Cada estado e transição do hook | Unitário (renderHook) |
+| **Funções utilitárias puras** | Cada transformação/validação em `lib/` ou `utils/` | Unitário |
+
+**Não testar:** wrappers de IPC (`ipc/commands.ts`, `ipc/events.ts`) — são chamadas diretas ao Tauri, sem lógica própria.
+
+## Cobertura numérica
 
 - Medida e reportada em cada execução de suíte.
 - **Sem percentual mínimo obrigatório** (metas suaves — RNF-025).
-- A garantia de cobertura relevante vem da regra **"todo CA vira teste"**, não de um número.
+- A garantia real vem das regras por camada acima + "todo CA vira teste", não de um número.
 
 Comandos:
 
@@ -169,6 +197,7 @@ Não fechar a correção sem passar por este fluxo.
 - CA-004: cada CA de uma feature possui ao menos um teste.
 - CA-005: cobertura é reportada (sem mínimo obrigatório).
 - CA-006: toda feature documenta o mapeamento CA→teste no seu `2-planejamento.md`.
+- CA-007: toda camada com lógica não-trivial atende às expectativas da seção "Cobertura por Camada" — repositórios, stores, serviços puros e componentes não ficam sem teste só porque um CA não os exercita diretamente.
 
 ---
 

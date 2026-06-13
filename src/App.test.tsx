@@ -14,6 +14,14 @@ vi.mock("@/ipc/events", () => ({
     readyCallback = cb;
     return Promise.resolve(() => {});
   }),
+  // Marco 1 — listeners usados por Descoberta.tsx (montado dentro de App).
+  onScanProgress: vi.fn(() => Promise.resolve(() => {})),
+  onScanCompleted: vi.fn(() => Promise.resolve(() => {})),
+  onScanFailed: vi.fn(() => Promise.resolve(() => {})),
+  onScanCancelled: vi.fn(() => Promise.resolve(() => {})),
+  onIndexingProgress: vi.fn(() => Promise.resolve(() => {})),
+  onIndexingCompleted: vi.fn(() => Promise.resolve(() => {})),
+  onIndexingFailed: vi.fn(() => Promise.resolve(() => {})),
 }));
 
 vi.mock("@/ipc/commands", () => ({
@@ -22,6 +30,9 @@ vi.mock("@/ipc/commands", () => ({
     calls.push("announce");
     return Promise.resolve();
   }),
+  escanearDiretorio: vi.fn(),
+  indexarArquivos: vi.fn(),
+  cancelarOperacao: vi.fn(),
 }));
 
 import App from "./App";
