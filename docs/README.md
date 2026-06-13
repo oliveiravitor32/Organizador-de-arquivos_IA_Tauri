@@ -85,6 +85,8 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 - [arquitetura/pipeline-ia.md](arquitetura/pipeline-ia.md) — arquitetura técnica da IA.
 - [arquitetura/estrutura-do-projeto.md](arquitetura/estrutura-do-projeto.md) — organização do código.
 - [arquitetura/frontend-ui.md](arquitetura/frontend-ui.md) — fundações do frontend (tokens, temas, estados).
+- [arquitetura/configuracao-e-seguranca.md](arquitetura/configuracao-e-seguranca.md) — config (TOML) e modelo de segurança.
+- [arquitetura/observabilidade.md](arquitetura/observabilidade.md) — logs, métricas e histórico (local, sem telemetria).
 
 ---
 
@@ -106,6 +108,7 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 | [ADR-010](decisoes/ADR-010-estrategia-de-snapshot-e-rollback.md) | Estratégia de Snapshot e Rollback |
 | [ADR-011](decisoes/ADR-011-tauri-v2-sqlx-vite.md) | Tauri v2, sqlx e Vite como Base Técnica |
 | [ADR-012](decisoes/ADR-012-ui-shadcn-tailwind.md) | shadcn/ui + Tailwind como Base de UI |
+| [ADR-013](decisoes/ADR-013-configuracao-e-observabilidade.md) | Configuração em Arquivo e Observabilidade Local |
 
 ---
 

@@ -64,6 +64,7 @@ ADR-010-estrategia-de-snapshot-e-rollback.md
 | ADR-010 | Estratégia de snapshot e rollback | Aceito |
 | ADR-011 | Tauri v2, sqlx e Vite como base técnica | Aceito |
 | ADR-012 | shadcn/ui + Tailwind como base de UI | Aceito |
+| ADR-013 | Configuração em arquivo e observabilidade local | Aceito |
 
 ---
 

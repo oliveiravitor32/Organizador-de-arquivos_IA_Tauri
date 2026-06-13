@@ -64,13 +64,13 @@ A interface não deve bloquear completamente a interação do usuário.
 
 O sistema deve suportar grandes volumes de arquivos.
 
-## Meta Inicial
+## Tiers de Volume
 
-Suportar:
+- **Mínimo (MVP):** 10.000 arquivos indexados.
+- **Alvo de fluidez:** 50.000 arquivos com boa experiência.
+- **Teto sem degradação severa:** 100.000 arquivos indexados.
 
-- 100.000 arquivos indexados
-
-Sem degradação severa da experiência.
+As metas concretas de desempenho (RNF-025) são calibradas para o alvo de fluidez (50.000).
 
 ---
 
@@ -341,6 +341,62 @@ O sistema deve priorizar clareza e segurança.
 - Confirmações explícitas.
 - Feedback visual contínuo.
 - Possibilidade de desfazer alterações.
+
+---
+
+# RNF-025 — Metas de Desempenho
+
+Metas **suaves** (orientativas, não bloqueiam o build), calibradas para o alvo de fluidez de **50.000 arquivos** no hardware-alvo (8 GB RAM, SSD, 4 núcleos).
+
+## Indexação (sem IA)
+
+Descoberta + metadados + extração de texto.
+
+- Throughput orientativo: **≥ 50 arquivos/segundo** para metadados.
+- 50.000 arquivos indexados em **poucos minutos** (extração de PDF/DOCX/OCR pode alongar).
+- Deve rodar em background, com progresso visível (RNF-004).
+
+---
+
+## Análise por IA
+
+Limitada pela inferência local (Qwen 3 4B). Naturalmente lenta para grandes volumes.
+
+- Não há meta de tempo total — é um processo **assíncrono, incremental e retomável**.
+- Soft target: arquivo de texto médio analisado em **poucos segundos**.
+- Deve respeitar `max_threads` e o limite de memória (RNF-007).
+
+---
+
+## Busca Semântica
+
+- Latência orientativa: **< 1 segundo** para retornar resultados sobre 50.000 embeddings.
+
+---
+
+## Construção/Atualização do Grafo
+
+- Atualização **incremental** por lote, na ordem de **segundos**, sem reprocessar tudo.
+
+---
+
+## Interface
+
+- Interações de UI respondem em **< 100 ms** (percepção de fluidez).
+- Inicialização **< 5 segundos** (ver RNF-008).
+
+---
+
+## Memória
+
+- Uso normal **< 2 GB** (ver RNF-007), inclusive durante indexação de 50.000 arquivos.
+
+---
+
+## Critério de Aceitação
+
+- As metas são verificadas por testes de desempenho **orientativos** (não reprovam o build).
+- Exceder uma meta gera registro/alerta, não falha.
 
 ---
 
