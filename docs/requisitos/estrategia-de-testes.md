@@ -193,6 +193,12 @@ Uma funcionalidade é considerada testada quando:
 
 ---
 
+# Convenções e Ferramentas
+
+As convenções concretas de arquivos de teste (onde ficam, nomenclatura, mocks) e as ferramentas (Vitest, React Testing Library, mockall, cobertura) estão em `convencoes-de-teste.md` (ADR-014).
+
+---
+
 # Observação
 
 Os Critérios de Aceitação dos casos de uso são a fonte da verdade para o comportamento esperado.

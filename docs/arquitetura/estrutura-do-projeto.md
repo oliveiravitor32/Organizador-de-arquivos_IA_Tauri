@@ -182,13 +182,18 @@ Apenas os repositórios acessam o SQLite; os serviços consomem repositórios.
 
 # Testes
 
+Testes **unitários ficam colocados junto ao código** (Rust inline em `#[cfg(test)]`; frontend em arquivos `*.test.ts(x)` ao lado do arquivo). Apenas integração e e2e ficam em `tests/`.
+
 ```text
 tests/
-├── integracao/       # Serviços contra banco real
+├── integracao/       # Serviços contra banco/FS reais
 └── e2e/              # Fluxos completos via commands
+
+src-tauri/src/**/*.rs # unidade inline (#[cfg(test)])
+src/**/*.test.ts(x)   # unidade/componente colocados
 ```
 
-A estratégia de testes será detalhada em documento próprio.
+Estratégia em `requisitos/estrategia-de-testes.md`; convenções de arquivo e ferramentas em `requisitos/convencoes-de-teste.md` (ADR-014).
 
 ---
 

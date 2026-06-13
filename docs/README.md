@@ -26,6 +26,7 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 - [requisitos/funcionais.md](requisitos/funcionais.md) — o que o sistema deve fazer.
 - [requisitos/nao-funcionais.md](requisitos/nao-funcionais.md) — desempenho, privacidade, resiliência.
 - [requisitos/estrategia-de-testes.md](requisitos/estrategia-de-testes.md) — como a qualidade é verificada.
+- [requisitos/convencoes-de-teste.md](requisitos/convencoes-de-teste.md) — convenções de arquivos de teste e ferramentas.
 
 ---
 
@@ -109,6 +110,7 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 | [ADR-011](decisoes/ADR-011-tauri-v2-sqlx-vite.md) | Tauri v2, sqlx e Vite como Base Técnica |
 | [ADR-012](decisoes/ADR-012-ui-shadcn-tailwind.md) | shadcn/ui + Tailwind como Base de UI |
 | [ADR-013](decisoes/ADR-013-configuracao-e-observabilidade.md) | Configuração em Arquivo e Observabilidade Local |
+| [ADR-014](decisoes/ADR-014-ferramentas-de-teste.md) | Ferramentas de Teste |
 
 ---
 

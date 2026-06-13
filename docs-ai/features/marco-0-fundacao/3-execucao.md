@@ -17,7 +17,7 @@ Derivado de `2-planejamento.md`. **Ainda não executado — aguardando validaç�
 - [ ] **T7** — Evento de teste emitido pelo backend; wrappers em `src/ipc/{commands,events}.ts`.
 - [ ] **T8** — Base de UI: Tailwind + shadcn/ui; `styles/globals.css` com tokens dos temas claro/escuro; alternador de tema com persistência; `components/ui/`. (ADR-012, `frontend-ui.md`)
 - [ ] **T9** — Tela inicial: chama `ping`, escuta o evento, exibe resultado; respeita tokens e estados.
-- [ ] **T10** — Testes: 1 unidade (erro), 1 integração (migração cria tabelas), pasta `tests/e2e` pronta.
+- [ ] **T10** — Ferramentas de teste (ADR-014, `convencoes-de-teste.md`): Vitest + RTL no front, `mockall` + cobertura (`cargo-llvm-cov`) no Rust; 1 teste unidade (erro, inline), 1 integração (migração cria tabelas), pasta `tests/e2e` pronta.
 
 ## Definition of Done
 

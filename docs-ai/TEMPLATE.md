@@ -56,7 +56,8 @@ Onde esta feature toca outras partes do sistema.
 
 ## Plano de testes
 
-Como cada CA vira teste (`docs/requisitos/estrategia-de-testes.md`).
+Mapeamento **cada CA → teste(s)**, indicando nível e arquivo previsto.
+Convenções e ferramentas em `docs/requisitos/convencoes-de-teste.md`.
 
 ## Decisões tomadas
 
@@ -72,7 +73,9 @@ Passos concretos, em ordem de execução, marcáveis.
 
 ## Definition of Done
 
-- [ ] CAs cobertos por teste
+- [ ] Cada CA tem ≥ 1 teste (mapeamento documentado no 2-planejamento)
+- [ ] Testes unitários seguem `convencoes-de-teste.md` (local, nome, mocks)
+- [ ] Cobertura reportada
 - [ ] Contratos (commands/events) respeitados
 - [ ] Sem violação das regras inegociáveis (CLAUDE.md)
 - [ ] UI usa só tokens de tema (sem cor crua / classe de cor direta do Tailwind)
