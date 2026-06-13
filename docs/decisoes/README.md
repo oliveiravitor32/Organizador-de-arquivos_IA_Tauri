@@ -62,6 +62,7 @@ ADR-010-estrategia-de-snapshot-e-rollback.md
 | ADR-008 | Qwen 3 4B como modelo inicial | Aceito |
 | ADR-009 | Motor de Sugestões orientado a conhecimento | Aceito |
 | ADR-010 | Estratégia de snapshot e rollback | Aceito |
+| ADR-011 | Tauri v2, sqlx e Vite como base técnica | Aceito |
 
 ---
 

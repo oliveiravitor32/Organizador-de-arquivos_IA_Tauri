@@ -103,6 +103,7 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 | [ADR-008](decisoes/ADR-008-qwen3-4b.md) | Qwen 3 4B como Modelo Inicial |
 | [ADR-009](decisoes/ADR-009-motor-de-sugestoes-orientado-a-conhecimento.md) | Motor de Sugestões Orientado a Conhecimento |
 | [ADR-010](decisoes/ADR-010-estrategia-de-snapshot-e-rollback.md) | Estratégia de Snapshot e Rollback |
+| [ADR-011](decisoes/ADR-011-tauri-v2-sqlx-vite.md) | Tauri v2, sqlx e Vite como Base Técnica |
 
 ---
 
