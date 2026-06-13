@@ -69,11 +69,12 @@ src/
 │   ├── sugestoes/
 │   ├── execucao/
 │   └── exploracao/
-├── ipc/                   # Wrappers dos commands e listeners de events
+├── ipc/                   # Wrappers dos commands e listeners de events (+ hooks TanStack Query)
 │   ├── commands.ts
 │   └── events.ts
 ├── hooks/
-├── stores/                # Estado de UI
+├── stores/                # Estado de UI (Zustand) — ADR-015
+├── i18n/                  # Catálogo de mensagens (i18n-ready)
 └── styles/
 ```
 

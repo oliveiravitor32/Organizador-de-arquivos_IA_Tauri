@@ -47,9 +47,15 @@ Derivados do entregável do Marco 0 ([roadmap.md](../../../docs/roadmap.md)):
 - **Biblioteca de acesso ao SQLite em Rust** (ex.: `sqlx`, `rusqlite`) e estratégia de migração. → decidir no planejamento.
 - **Gerenciador de pacotes/bundler do frontend** (Vite assumido pelo template Tauri). → confirmar.
 
+> Gate de Marco: o M0 **não tem decisões pendentes** — base decidida em ADR-011 a ADR-015 (ver `roadmap.md`).
+
 ## Fundações transversais a estabelecer no M0
 
 - **Configuração** — carregar `config.toml` com padrões seguros ([configuracao-e-seguranca.md](../../../docs/arquitetura/configuracao-e-seguranca.md), ADR-013).
 - **Segurança** — validação de caminho dentro do diretório raiz (mesma doc).
 - **Observabilidade** — logger estruturado base, sem conteúdo sensível ([observabilidade.md](../../../docs/arquitetura/observabilidade.md), ADR-013).
 - **Desempenho** — metas suaves calibradas para 50k arquivos (RNF-025); não bloqueiam o M0.
+- **Estado do frontend** — Zustand + TanStack Query (ADR-015).
+- **i18n-ready** — textos centralizados em `src/i18n/`, sem strings hardcoded (frontend-ui.md).
+- **CI** — workflow mínimo (lint + testes) no GitHub Actions (`desenvolvimento/integracao-continua.md`).
+- **Ambiente de dev** — pré-requisitos em `desenvolvimento/ambiente-de-desenvolvimento.md`.

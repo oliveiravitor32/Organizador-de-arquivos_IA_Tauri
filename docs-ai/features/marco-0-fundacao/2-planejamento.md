@@ -26,9 +26,12 @@ Resolvendo as questões em aberto da pesquisa:
 5. **Tipo de erro estruturado** (`error.rs`) com `code`, `message`, `details`, serializável ao frontend. *(dep: 2)*
 6. **Command de teste `ping`** retornando versão do app; registrar na fronteira. *(dep: 2, 5)*
 7. **Evento de teste** emitido pelo backend e recebido no frontend; wrappers em `src/ipc/`. *(dep: 6)*
-8. **Base de UI** — instalar Tailwind + shadcn/ui; `styles/globals.css` com os tokens dos temas claro/escuro (preto suave / neutro claro); alternador de tema com persistência; `components/ui/` criado. *(dep: 2, ADR-012, frontend-ui.md)*
-9. **Tela inicial vazia** que chama `ping` e escuta o evento, exibindo o resultado, já respeitando tokens e estados. *(dep: 7, 8)*
-10. **Suíte de testes base:** 1 unidade (erro estruturado), 1 integração (migração cria tabelas em SQLite efêmero), estrutura `tests/e2e` pronta. *(dep: 4, 5)*
+8. **Base de UI** — instalar Tailwind + shadcn/ui; `styles/globals.css` com os tokens dos temas claro/escuro na paleta `neutral`; alternador de tema com persistência; `components/ui/` criado. *(dep: 2, ADR-012, frontend-ui.md)*
+9. **Estado do frontend** — instalar Zustand + TanStack Query; `QueryClient` no app; store de tema no Zustand. *(dep: 2, ADR-015)*
+10. **i18n-ready** — `src/i18n/` com catálogo de mensagens; sem strings hardcoded na tela inicial. *(dep: 2, frontend-ui.md)*
+11. **Tela inicial vazia** que chama `ping` (via TanStack Query) e escuta o evento, exibindo o resultado, já respeitando tokens, estados e i18n. *(dep: 7, 8, 9, 10)*
+12. **CI mínima** — workflow GitHub Actions: lint + testes (Rust e front). *(dep: 13, integracao-continua.md)*
+13. **Suíte de testes base:** 1 unidade (erro estruturado), 1 integração (migração cria tabelas em SQLite efêmero), estrutura `tests/e2e` pronta. *(dep: 4, 5)*
 
 ## Pontos de integração
 

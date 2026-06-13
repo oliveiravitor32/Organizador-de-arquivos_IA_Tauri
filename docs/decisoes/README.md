@@ -66,6 +66,7 @@ ADR-010-estrategia-de-snapshot-e-rollback.md
 | ADR-012 | shadcn/ui + Tailwind como base de UI | Aceito |
 | ADR-013 | Configuração em arquivo e observabilidade local | Aceito |
 | ADR-014 | Ferramentas de teste | Aceito |
+| ADR-015 | Estado do frontend (Zustand + TanStack Query) | Aceito |
 
 ---
 

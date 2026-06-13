@@ -53,6 +53,27 @@ A UI não contém regra de negócio; consome apenas commands e events (ver `taur
 
 ---
 
+# Estado (ADR-015)
+
+Divisão clara de responsabilidades:
+
+- **TanStack Query** — estado assíncrono vindo dos commands Tauri (loading, erro, cache, refetch). Eventos do backend invalidam/atualizam queries.
+- **Zustand** — estado puramente de UI (preferências, seleção, tema, navegação).
+
+Regra: dados do backend nunca são duplicados manualmente no Zustand — pertencem ao TanStack Query.
+
+---
+
+# Internacionalização (i18n-ready)
+
+O MVP é **pt-BR**, mas o código é preparado para tradução futura:
+
+- Nenhuma string de UI fica hardcoded em componente.
+- Textos ficam centralizados (catálogo de mensagens), prontos para um mecanismo de i18n.
+- Adicionar um idioma no futuro não deve exigir refatorar componentes.
+
+---
+
 # Organização de Componentes
 
 Conforme `estrutura-do-projeto.md`:

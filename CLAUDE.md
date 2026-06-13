@@ -36,6 +36,17 @@ A especificação completa está em `docs/` (Spec Driven Development) — **é a
 
 Não invente decisões fora dos ADRs. Se algo não está especificado, pergunte ou registre uma decisão antes.
 
+## Gate de Marco (OBRIGATÓRIO antes de implementar qualquer marco)
+
+Antes de escrever qualquer código de um marco, execute este gate e **pare para falar com o usuário**:
+
+1. Releia o marco no `docs/roadmap.md` (escopo, UCs, decisões pendentes listadas).
+2. Identifique toda **decisão/ferramenta ainda não documentada** que o marco exige (ex.: bibliotecas de extração no M1, busca vetorial no M2, motor de OCR no M1).
+3. **Solicite essas decisões ao usuário**, apresentando recomendações — e registre cada uma como **ADR** antes de codar.
+4. Só então crie/finalize `docs-ai/features/<marco>/` e implemente.
+
+**Nunca inicie a implementação de um marco com decisões pendentes.** Documentar primeiro, codar depois.
+
 ---
 
 ## Mapa de navegação do `docs/`

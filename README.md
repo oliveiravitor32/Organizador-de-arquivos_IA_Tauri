@@ -27,7 +27,8 @@ Seus arquivos  →  Indexação  →  IA local  →  Grafo de Conhecimento
 
 | Camada | Tecnologia |
 | --- | --- |
-| Interface | React + Vite |
+| Interface | React + Vite + Tailwind + shadcn/ui |
+| Estado (FE) | Zustand + TanStack Query |
 | Desktop | Tauri v2 |
 | Backend | Rust |
 | Persistência | SQLite (`sqlx`) |
@@ -128,4 +129,4 @@ M0 Fundação → M1 Descoberta → M2 Conhecimento → M3 Inteligência
 
 ## 📄 Licença
 
-A definir.
+[MIT](LICENSE) © Vitor Oliveira

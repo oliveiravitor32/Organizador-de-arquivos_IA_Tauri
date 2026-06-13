@@ -207,6 +207,24 @@ A Exploração (M5) depende tecnicamente apenas do grafo (M2), mas é sequenciad
 
 ---
 
+# Decisões Pendentes por Marco (Gate de Marco)
+
+Decisões técnicas deliberadamente adiadas para o momento de cada marco. Antes de implementar o marco, o **Gate de Marco** (ver `CLAUDE.md`) exige decidi-las com o usuário e registrá-las como ADR.
+
+| Marco | Decisões a definir antes de codar |
+| --- | --- |
+| M0 | ✅ nenhuma — base já decidida (ADR-011 a ADR-015) |
+| M1 | bibliotecas de extração (PDF/DOCX/XLSX em Rust); motor de OCR (ex.: Tesseract) |
+| M2 | estratégia de **busca vetorial / similaridade** (cosseno em memória, `sqlite-vss`, ou lib); parâmetros de clusterização |
+| M3 | heurísticas/limiares do motor de sugestões |
+| M4 | (sem pendência conhecida — snapshot/rollback já em ADR-010) |
+| M5 | reaproveita a decisão de busca vetorial do M2; roteamento de UI se ainda não definido |
+| M6 | estratégia de release/empacotamento (instaladores Windows/Linux); auto-update |
+
+Esta tabela é viva: novas pendências descobertas durante a pesquisa de uma feature entram aqui.
+
+---
+
 # Observação
 
 A ordem reflete dependências reais e priorização de valor.

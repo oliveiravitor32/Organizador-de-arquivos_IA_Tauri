@@ -111,12 +111,21 @@ Visão → Requisitos → Domínios → Casos de Uso → Arquitetura → Decisõ
 | [ADR-012](decisoes/ADR-012-ui-shadcn-tailwind.md) | shadcn/ui + Tailwind como Base de UI |
 | [ADR-013](decisoes/ADR-013-configuracao-e-observabilidade.md) | Configuração em Arquivo e Observabilidade Local |
 | [ADR-014](decisoes/ADR-014-ferramentas-de-teste.md) | Ferramentas de Teste |
+| [ADR-015](decisoes/ADR-015-estado-frontend.md) | Estado do Frontend (Zustand + TanStack Query) |
 
 ---
 
 # Planejamento
 
-- [roadmap.md](roadmap.md) — ordem de construção por marcos.
+- [roadmap.md](roadmap.md) — ordem de construção por marcos (+ decisões pendentes por marco).
+
+---
+
+# Desenvolvimento
+
+- [desenvolvimento/ambiente-de-desenvolvimento.md](desenvolvimento/ambiente-de-desenvolvimento.md) — setup da máquina.
+- [desenvolvimento/integracao-continua.md](desenvolvimento/integracao-continua.md) — estratégia de CI.
+- [../CONTRIBUTING.md](../CONTRIBUTING.md) — fluxo de contribuição e convenções de Git.
 
 ---
 
