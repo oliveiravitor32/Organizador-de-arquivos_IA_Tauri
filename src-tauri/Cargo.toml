@@ -1,5 +1,5 @@
 [package]
-name = "organizador-de-arquivos_tauri"
+name = "organizador-de-arquivos_ia_tauri"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
