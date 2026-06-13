@@ -44,3 +44,11 @@ docs-ai/
 - **Efêmero por feature** — cada pasta é um rastro daquela entrega.
 - **Encadeado** — pesquisa → planejamento → execução, sempre nessa ordem.
 - **Regras inegociáveis** — estão no `CLAUDE.md` da raiz; valem sempre.
+
+---
+
+## Inspiração
+
+O fluxo **pesquisa → planejamento → execução** é inspirado no padrão *research → plan → execute* para Spec Driven Development apresentado pelo Google Developers:
+
+- 🎥 [Short — research, plan, execute (Google Developers)](https://youtube.com/shorts/zn4mPqPPDFQ)
