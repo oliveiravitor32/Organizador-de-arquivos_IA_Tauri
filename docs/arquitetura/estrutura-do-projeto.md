@@ -108,9 +108,9 @@ src-tauri/
     │   ├── sugestoes/
     │   └── operacoes/
     ├── domain/            # Modelos de domínio e tipos
-    ├── db/                # Migrações e acesso ao SQLite
-    │   ├── migrations/
+    ├── db/                # Acesso ao SQLite (pool, repositórios)
     │   └── repositories/
+    ├── migrations/        # DDL incremental (convenção sqlx — na raiz do crate)
     └── error.rs           # Tipos de erro estruturados
 ```
 
@@ -166,8 +166,8 @@ O pipeline depende da interface, nunca do adaptador diretamente — permitindo s
 
 ```text
 db/
-├── migrations/       # DDL incremental (ver esquema-sql.md)
 └── repositories/     # Acesso por agregado
+# Obs: migrações ficam em src-tauri/migrations/ (raiz do crate, convenção sqlx)
     ├── files.rs
     ├── entities.rs
     ├── relationships.rs

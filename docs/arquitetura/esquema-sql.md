@@ -41,7 +41,7 @@ Booleanos são armazenados como `INTEGER` (0 ou 1).
 
 O esquema é versionado por migrações incrementais e numeradas.
 
-A versão atual é registrada via `PRAGMA user_version`.
+O versionamento é gerenciado pelo **sqlx**, que cria e mantém a tabela `_sqlx_migrations` automaticamente. `PRAGMA user_version` não é usado.
 
 ---
 
