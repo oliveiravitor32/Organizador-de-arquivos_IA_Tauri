@@ -1,14 +1,52 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+pub mod commands;
+pub mod core;
+pub mod db;
+pub mod error;
+pub mod events;
+
+use tauri::{Emitter, Manager};
+
+use crate::core::state::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .setup(|app| {
+            let handle = app.handle().clone();
+
+            // Diretório de dados da aplicação (criado se necessário).
+            let data_dir = handle
+                .path()
+                .app_data_dir()
+                .expect("não foi possível resolver o diretório de dados");
+            std::fs::create_dir_all(&data_dir).ok();
+            let db_path = data_dir.join("organizador.db");
+
+            // Inicializa o banco e aplica as migrações.
+            let pool = tauri::async_runtime::block_on(async move {
+                let pool = db::create_pool(&db_path)
+                    .await
+                    .expect("falha ao abrir o banco de dados");
+                db::run_migrations(&pool)
+                    .await
+                    .expect("falha ao aplicar migrações");
+                pool
+            });
+
+            app.manage(AppState { db: pool });
+
+            // Evento de teste: valida a ponte backend -> frontend (Marco 0).
+            let _ = handle.emit(
+                events::READY,
+                events::ReadyPayload {
+                    message: "Backend pronto".to_string(),
+                },
+            );
+
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![commands::ping])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
