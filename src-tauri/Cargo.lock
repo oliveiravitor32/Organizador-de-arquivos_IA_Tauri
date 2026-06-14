@@ -2972,7 +2972,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "organizador-de-arquivos_ia_tauri"
+name = "organizador-de-arquivos-ia-tauri"
 version = "0.1.0"
 dependencies = [
  "async-trait",
