@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Pre-commit: replica as checagens do CI (`.github/workflows/ci.yml`)
+# para evitar falhas remotas. Roda no Bash do Git for Windows / Linux / macOS.
+
+set -e
+
+echo "→ cargo fmt --check"
+cargo fmt --manifest-path src-tauri/Cargo.toml --check
+
+echo "→ npm run typecheck"
+npm run typecheck --silent
