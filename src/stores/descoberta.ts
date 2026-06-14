@@ -54,20 +54,25 @@ export const useDescobertaStore = create<DescobertaState>((set) => ({
   setScanCompleted: (stats) =>
     set({ status: "scan_done", scanStats: stats }),
 
-  setIndexingStarted: (indexingId) =>
-    set({ status: "indexing", indexingId, indexingProgress: null }),
+  setIndexingStarted: (indexingId) => {
+    localStorage.setItem("activeIndexingId", indexingId);
+    set({ status: "indexing", indexingId, indexingProgress: null });
+  },
 
   setIndexingProgress: (processed, total) =>
     set({ indexingProgress: { processed, total } }),
 
-  setIndexingCompleted: (stats) =>
-    set({ status: "indexing_done", indexingStats: stats }),
+  setIndexingCompleted: (stats) => {
+    localStorage.removeItem("activeIndexingId");
+    set({ status: "indexing_done", indexingStats: stats });
+  },
 
   setError: (msg) => set({ status: "error", erro: msg }),
 
   setCancelled: () => set({ status: "cancelled" }),
 
-  reset: () =>
+  reset: () => {
+    localStorage.removeItem("activeIndexingId");
     set({
       status: "idle",
       scanId: null,
@@ -77,5 +82,6 @@ export const useDescobertaStore = create<DescobertaState>((set) => ({
       scanProgress: null,
       indexingProgress: null,
       erro: null,
-    }),
+    });
+  },
 }));

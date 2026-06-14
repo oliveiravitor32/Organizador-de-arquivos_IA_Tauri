@@ -50,9 +50,41 @@ export function indexarArquivos(
   return invoke<IndexarArquivosResult>("indexar_arquivos", { scanId });
 }
 
+/** Retorna o resultado de uma indexação concluída, se disponível (CA-HMR-001). */
+export function consultarIndexacao(
+  indexingId: string,
+): Promise<IndexingCompletedResult | null> {
+  return invoke<IndexingCompletedResult | null>("consultar_indexacao", {
+    indexingId,
+  });
+}
+
+export interface IndexingCompletedResult {
+  indexingId: string;
+  processados: number;
+  ignorados: number;
+  falhos: number;
+  durationMs: number;
+}
+
 /** Cancela uma operação assíncrona em andamento. */
 export function cancelarOperacao(
   operationId: string,
 ): Promise<CancelarOperacaoResult> {
   return invoke<CancelarOperacaoResult>("cancelar_operacao", { operationId });
+}
+
+// ── Marco 2 — Conhecimento ────────────────────────────────────────────────────
+
+export interface AnalisarArquivosResult {
+  analysisId: string;
+}
+
+/** Inicia o pipeline de análise semântica dos arquivos pendentes (UC-003). */
+export function analisarArquivos(
+  fileIds?: string[],
+): Promise<AnalisarArquivosResult> {
+  return invoke<AnalisarArquivosResult>("analisar_arquivos", {
+    fileIds: fileIds ?? null,
+  });
 }

@@ -1,4 +1,5 @@
-//! Modelos de domínio do Marco 1 — Descoberta.
+//! Modelos de domínio.
 
 pub mod arquivo;
+pub mod conhecimento;
 pub mod scan;

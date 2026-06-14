@@ -35,7 +35,13 @@ sha2 = "0.10"
 mime_guess = "2"
 walkdir = "2"
 chrono = { version = "0.4", features = ["serde"] }
+# Marco 2 — pipeline de IA (ADR-018 a ADR-022)
+ndarray = "0.16"
+bytemuck = { version = "1", features = ["derive"] }
+reqwest = { version = "0.12", features = ["json"] }
+async-trait = "0.1"
 
 [dev-dependencies]
 tempfile = "3"
+mockall = "0.13"
 

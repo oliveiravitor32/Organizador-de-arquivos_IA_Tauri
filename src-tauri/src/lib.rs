@@ -47,6 +47,8 @@ pub fn run() {
             commands::descoberta::escanear_diretorio,
             commands::descoberta::indexar_arquivos,
             commands::descoberta::cancelar_operacao,
+            commands::descoberta::consultar_indexacao,
+            commands::conhecimento::analisar_arquivos,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

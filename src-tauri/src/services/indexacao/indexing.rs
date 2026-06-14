@@ -4,7 +4,7 @@ use std::path::Path;
 use std::time::Instant;
 
 use sha2::{Digest, Sha256};
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use tokio::sync::watch;
 
 use crate::db::repositories::files::FileRepository;
@@ -82,18 +82,21 @@ impl IndexingService {
 
         stats.duration_ms = inicio.elapsed().as_millis() as u64;
 
-        self.app
-            .emit(
-                "indexing://completed",
-                serde_json::json!({
-                    "indexingId": indexing_id,
-                    "processados": stats.processed,
-                    "ignorados": stats.skipped,
-                    "falhos": stats.failed,
-                    "durationMs": stats.duration_ms,
-                }),
-            )
-            .ok();
+        let payload = serde_json::json!({
+            "indexingId": indexing_id,
+            "processados": stats.processed,
+            "ignorados": stats.skipped,
+            "falhos": stats.failed,
+            "durationMs": stats.duration_ms,
+        });
+
+        // Persiste antes de emitir — garante que o frontend pode consultar
+        // o resultado mesmo que o evento seja perdido por hot-reload (CA-HMR-001).
+        if let Some(state) = self.app.try_state::<crate::core::state::AppState>() {
+            state.store_resultado(indexing_id, payload.clone());
+        }
+
+        self.app.emit("indexing://completed", payload).ok();
 
         Ok(stats)
     }

@@ -13,6 +13,7 @@ vi.mock("@/ipc/commands", () => ({
   escanearDiretorio: vi.fn(),
   indexarArquivos: vi.fn(),
   cancelarOperacao: vi.fn(() => Promise.resolve({ operationId: "op-1", status: "cancelando" })),
+  consultarIndexacao: vi.fn(() => Promise.resolve(null)),
 }));
 
 vi.mock("@/ipc/events", () => ({
@@ -397,5 +398,62 @@ describe("Descoberta — UC-002 CA-006: resultado da indexação", () => {
     await waitFor(() =>
       expect(screen.getByText(/erro/i)).toBeInTheDocument(),
     );
+  });
+});
+
+// CA-HMR-001: regressão — UI não fica presa após hot-reload durante indexação.
+describe("Descoberta — CA-HMR-001: reconexão após reload do frontend", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useDescobertaStore.getState().reset();
+    localStorage.clear();
+  });
+
+  it("recupera resultado perdido via consultarIndexacao ao montar", async () => {
+    const { consultarIndexacao } = await import("@/ipc/commands");
+    const resultado = {
+      indexingId: "idx-hmr",
+      processados: 48,
+      ignorados: 2,
+      falhos: 0,
+      durationMs: 3200,
+    };
+    vi.mocked(consultarIndexacao).mockResolvedValueOnce(resultado);
+
+    // Simula estado pré-reload: indexingId salvo mas evento perdido
+    localStorage.setItem("activeIndexingId", "idx-hmr");
+
+    renderDescoberta();
+
+    await waitFor(() =>
+      expect(screen.getByText(/indexação concluída/i)).toBeInTheDocument(),
+    );
+    expect(screen.getByText(/48/)).toBeInTheDocument();
+  });
+
+  it("não chama consultarIndexacao se não há operação pendente no localStorage", async () => {
+    const { consultarIndexacao } = await import("@/ipc/commands");
+    renderDescoberta();
+    await waitFor(() => expect(screen.queryByText(/indexação concluída/i)).not.toBeInTheDocument());
+    expect(consultarIndexacao).not.toHaveBeenCalled();
+  });
+
+  it("setIndexingStarted persiste indexingId no localStorage", () => {
+    useDescobertaStore.getState().setIndexingStarted("idx-persist");
+    expect(localStorage.getItem("activeIndexingId")).toBe("idx-persist");
+  });
+
+  it("setIndexingCompleted remove indexingId do localStorage", () => {
+    localStorage.setItem("activeIndexingId", "idx-done");
+    useDescobertaStore.getState().setIndexingCompleted({
+      indexingId: "idx-done", processados: 5, ignorados: 0, falhos: 0, durationMs: 100,
+    });
+    expect(localStorage.getItem("activeIndexingId")).toBeNull();
+  });
+
+  it("reset remove indexingId do localStorage", () => {
+    localStorage.setItem("activeIndexingId", "idx-reset");
+    useDescobertaStore.getState().reset();
+    expect(localStorage.getItem("activeIndexingId")).toBeNull();
   });
 });

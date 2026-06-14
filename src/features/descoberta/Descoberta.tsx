@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "@/i18n";
 import {
   cancelarOperacao,
+  consultarIndexacao,
   escanearDiretorio,
   indexarArquivos,
 } from "@/ipc/commands";
@@ -57,6 +58,16 @@ export function Descoberta() {
         }),
       ]);
       unlistenRefs.current = fns;
+
+      // CA-HMR-001: reconexão após hot-reload.
+      // Listeners já registrados — consulta o backend pelo resultado perdido.
+      const activeId = localStorage.getItem("activeIndexingId");
+      if (activeId && montado) {
+        const resultado = await consultarIndexacao(activeId);
+        if (resultado && montado) {
+          store.setIndexingCompleted(resultado);
+        }
+      }
     })();
 
     return () => {

@@ -1,5 +1,6 @@
 //! Commands expostos ao frontend (ver docs/arquitetura/contratos-tauri.md).
 
+pub mod conhecimento;
 pub mod descoberta;
 
 use tauri::{AppHandle, Emitter};

@@ -69,6 +69,12 @@ ADR-010-estrategia-de-snapshot-e-rollback.md
 | ADR-015 | Estado do frontend (Zustand + TanStack Query) | Aceito |
 | ADR-016 | Bibliotecas de extração de conteúdo (M1) | Aceito |
 | ADR-017 | OCR para imagens adiado para M6 | Aceito |
+| ADR-018 | Modelo de embeddings: nomic-embed-text via Ollama (M2) | Aceito |
+| ADR-019 | Similaridade vetorial: cosseno em memória com ndarray (M2) | Aceito |
+| ADR-020 | Serialização de vetores: BLOB binário f32 little-endian (M2) | Aceito |
+| ADR-021 | Cliente Ollama: reqwest com structs próprias (M2) | Aceito |
+| ADR-022 | Clusterização: threshold de similaridade de cosseno (M2) | Aceito |
+| ADR-023 | LLM usado somente na geração de sugestões (Marco 3) | Aceito |
 
 ---
 

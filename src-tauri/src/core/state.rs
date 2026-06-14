@@ -11,6 +11,8 @@ pub struct AppState {
     pub db: SqlitePool,
     /// Canais de cancelamento ativos por operationId.
     pub cancel_senders: Mutex<HashMap<String, watch::Sender<bool>>>,
+    /// Resultados de operações concluídas — permite reconexão após reload do frontend.
+    pub resultados: Mutex<HashMap<String, serde_json::Value>>,
 }
 
 impl AppState {
@@ -18,6 +20,23 @@ impl AppState {
         Self {
             db,
             cancel_senders: Mutex::new(HashMap::new()),
+            resultados: Mutex::new(HashMap::new()),
+        }
+    }
+
+    /// Armazena o payload de conclusão de uma operação para consulta posterior.
+    pub fn store_resultado(&self, op_id: &str, payload: serde_json::Value) {
+        if let Ok(mut map) = self.resultados.lock() {
+            map.insert(op_id.to_string(), payload);
+        }
+    }
+
+    /// Retorna e remove o resultado armazenado de uma operação.
+    pub fn take_resultado(&self, op_id: &str) -> Option<serde_json::Value> {
+        if let Ok(mut map) = self.resultados.lock() {
+            map.remove(op_id)
+        } else {
+            None
         }
     }
 
@@ -102,5 +121,29 @@ mod tests {
         s.remove_cancel("op-4");
         // Após remoção, cancel deve retornar false.
         assert!(!s.cancel("op-4"));
+    }
+
+    #[tokio::test]
+    async fn store_resultado_persiste_payload() {
+        let s = state().await;
+        let payload = serde_json::json!({ "processados": 10, "falhos": 0 });
+        s.store_resultado("op-5", payload.clone());
+        let resultado = s.take_resultado("op-5");
+        assert_eq!(resultado, Some(payload));
+    }
+
+    #[tokio::test]
+    async fn take_resultado_remove_entrada() {
+        let s = state().await;
+        s.store_resultado("op-6", serde_json::json!({}));
+        s.take_resultado("op-6");
+        // Segunda chamada deve retornar None — já foi consumido.
+        assert!(s.take_resultado("op-6").is_none());
+    }
+
+    #[tokio::test]
+    async fn take_resultado_retorna_none_para_inexistente() {
+        let s = state().await;
+        assert!(s.take_resultado("fantasma").is_none());
     }
 }

@@ -92,7 +92,10 @@ Transformar arquivos em conhecimento estruturado.
 
 ## Entregável
 
-Arquivos analisados geram entidades, embeddings, relações e clusters incorporados ao grafo.
+Arquivos analisados geram embeddings e clusters semânticos incorporados ao grafo.
+Entidades e relações explícitas (via LLM) foram movidas para o Marco 3 (ADR-023):
+o LLM será usado apenas para nomear clusters e gerar sugestões legíveis, com uma
+chamada por cluster (não por arquivo), recebendo somente metadados.
 
 ---
 
@@ -215,7 +218,7 @@ Decisões técnicas deliberadamente adiadas para o momento de cada marco. Antes 
 | --- | --- |
 | M0 | ✅ nenhuma — base já decidida (ADR-011 a ADR-015) |
 | M1 | ✅ bibliotecas de extração: `pdf-extract` + `docx-rs` + `calamine` (ADR-016); OCR adiado para M6 (ADR-017) |
-| M2 | estratégia de **busca vetorial / similaridade** (cosseno em memória, `sqlite-vss`, ou lib); parâmetros de clusterização |
+| M2 | ✅ modelo de embeddings: nomic-embed-text (ADR-018); similaridade: cosseno em memória com ndarray (ADR-019); serialização: BLOB f32 LE (ADR-020); cliente Ollama: reqwest direto (ADR-021); clusterização: threshold de cosseno 0.75 (ADR-022); LLM somente no Marco 3 (ADR-023) |
 | M3 | heurísticas/limiares do motor de sugestões |
 | M4 | (sem pendência conhecida — snapshot/rollback já em ADR-010) |
 | M5 | reaproveita a decisão de busca vetorial do M2; roteamento de UI se ainda não definido |

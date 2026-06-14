@@ -131,6 +131,42 @@ impl<'a> FileRepository<'a> {
         Ok(())
     }
 
+    /// Retorna arquivos com status pending_analysis, opcionalmente filtrados por ids.
+    pub async fn find_pending_analysis(
+        &self,
+        file_ids: Option<&[String]>,
+    ) -> AppResult<Vec<FileRecord>> {
+        let rows = match file_ids {
+            None => {
+                sqlx::query_as::<_, FileRecord>(
+                    "SELECT id, path, relative_path, name, extension, size, hash, mime_type, scan_id, status, created_at, modified_at, indexed_at FROM files WHERE status = 'pending_analysis'",
+                )
+                .fetch_all(self.pool)
+                .await?
+            }
+            Some(ids) => {
+                // SQLite não suporta IN com parâmetro de lista; filtra em memória
+                let all = sqlx::query_as::<_, FileRecord>(
+                    "SELECT id, path, relative_path, name, extension, size, hash, mime_type, scan_id, status, created_at, modified_at, indexed_at FROM files WHERE status = 'pending_analysis'",
+                )
+                .fetch_all(self.pool)
+                .await?;
+                all.into_iter().filter(|r| ids.contains(&r.id)).collect()
+            }
+        };
+        Ok(rows)
+    }
+
+    /// Retorna o conteúdo textual de um arquivo.
+    pub async fn get_content(&self, file_id: &str) -> AppResult<Option<String>> {
+        let content: Option<String> =
+            sqlx::query_scalar("SELECT content FROM file_contents WHERE file_id = ?")
+                .bind(file_id)
+                .fetch_optional(self.pool)
+                .await?;
+        Ok(content)
+    }
+
     /// Conta arquivos com status DISCOVERED para um scan.
     pub async fn count_by_scan_and_status(
         &self,

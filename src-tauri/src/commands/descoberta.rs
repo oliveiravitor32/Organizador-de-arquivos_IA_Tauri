@@ -86,3 +86,16 @@ pub fn cancelar_operacao(
         "status": if cancelou { "cancelando" } else { "nao_encontrada" }
     }))
 }
+
+/// Retorna o resultado de uma indexação concluída, se disponível (CA-HMR-001).
+///
+/// Permite que o frontend recupere o payload de `indexing://completed` mesmo
+/// que o evento tenha sido perdido por hot-reload ou reconexão.
+/// O resultado é consumido na primeira consulta (evita acúmulo de memória).
+#[tauri::command]
+pub async fn consultar_indexacao(
+    state: State<'_, AppState>,
+    indexing_id: String,
+) -> AppResult<Option<serde_json::Value>> {
+    Ok(state.take_resultado(&indexing_id))
+}

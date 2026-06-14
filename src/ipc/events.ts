@@ -72,3 +72,54 @@ export function onIndexingCompleted(
 export function onIndexingFailed(cb: (p: { indexingId: string }) => void): Promise<UnlistenFn> {
   return listen<{ indexingId: string }>("indexing://failed", (e) => cb(e.payload));
 }
+
+// ── Marco 2 — Eventos de Análise ─────────────────────────────────────────────
+
+export interface AnalysisStartedPayload {
+  analysisId: string;
+  total: number;
+}
+
+export interface AnalysisProgressPayload {
+  analysisId: string;
+  processed: number;
+  total: number;
+  currentFile: string;
+}
+
+export interface AnalysisCompletedPayload {
+  analysisId: string;
+  stats: {
+    processados: number;
+    semConteudo: number;
+    falhos: number;
+    clustersCriados: number;
+    durationMs: number;
+  };
+}
+
+export function onAnalysisStarted(
+  cb: (p: AnalysisStartedPayload) => void,
+): Promise<UnlistenFn> {
+  return listen<AnalysisStartedPayload>("analysis://started", (e) => cb(e.payload));
+}
+
+export function onAnalysisProgress(
+  cb: (p: AnalysisProgressPayload) => void,
+): Promise<UnlistenFn> {
+  return listen<AnalysisProgressPayload>("analysis://progress", (e) => cb(e.payload));
+}
+
+export function onAnalysisCompleted(
+  cb: (p: AnalysisCompletedPayload) => void,
+): Promise<UnlistenFn> {
+  return listen<AnalysisCompletedPayload>("analysis://completed", (e) => cb(e.payload));
+}
+
+export function onAnalysisFailed(
+  cb: (p: { analysisId: string; error: string }) => void,
+): Promise<UnlistenFn> {
+  return listen<{ analysisId: string; error: string }>("analysis://failed", (e) =>
+    cb(e.payload),
+  );
+}

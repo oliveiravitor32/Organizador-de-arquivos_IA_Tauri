@@ -28,4 +28,16 @@ export const ptBR = {
     dirSelecionado: "Diretório selecionado",
     nenhumDir: "Nenhum diretório selecionado",
   },
+  analise: {
+    titulo: "Análise Semântica",
+    analisar: "Analisar arquivos",
+    analisando: "Analisando…",
+    concluido: "Análise concluída",
+    processados: "arquivos processados",
+    semConteudo: "sem conteúdo textual",
+    clusters: "clusters formados",
+    falhos: "com falha",
+    erro: "Erro ao analisar arquivos",
+    nenhumPendente: "Nenhum arquivo pendente de análise",
+  },
 };
