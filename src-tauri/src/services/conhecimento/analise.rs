@@ -14,11 +14,8 @@ use crate::domain::arquivo::FileStatus;
 use crate::domain::conhecimento::AnaliseStats;
 use crate::error::AppResult;
 use crate::events;
+use crate::services::conhecimento::{clusters::ClusterService, embeddings::EmbeddingService};
 use crate::services::ia::ServicoIa;
-use crate::services::conhecimento::{
-    clusters::ClusterService,
-    embeddings::EmbeddingService,
-};
 
 pub struct AnaliseService {
     pool: SqlitePool,
@@ -28,7 +25,11 @@ pub struct AnaliseService {
 
 impl AnaliseService {
     pub fn new(pool: SqlitePool, ia: Arc<dyn ServicoIa>, embed_model: impl Into<String>) -> Self {
-        Self { pool, ia, embed_model: embed_model.into() }
+        Self {
+            pool,
+            ia,
+            embed_model: embed_model.into(),
+        }
     }
 
     /// Executa o pipeline de embeddings + clusterização para os arquivos pendentes.
@@ -40,9 +41,7 @@ impl AnaliseService {
         analysis_id: &str,
     ) -> AppResult<AnaliseStats> {
         let file_repo = FileRepository::new(&self.pool);
-        let arquivos = file_repo
-            .find_pending_analysis(file_ids.as_deref())
-            .await?;
+        let arquivos = file_repo.find_pending_analysis(file_ids.as_deref()).await?;
 
         if arquivos.is_empty() {
             return Ok(AnaliseStats::default());
@@ -51,10 +50,13 @@ impl AnaliseService {
         let total = arquivos.len();
         let started = std::time::Instant::now();
 
-        let _ = app.emit(events::ANALYSIS_STARTED, serde_json::json!({
-            "analysisId": analysis_id,
-            "total": total
-        }));
+        let _ = app.emit(
+            events::ANALYSIS_STARTED,
+            serde_json::json!({
+                "analysisId": analysis_id,
+                "total": total
+            }),
+        );
 
         let mut processados = 0u64;
         let mut sem_conteudo = 0u64;
@@ -63,12 +65,15 @@ impl AnaliseService {
         let embed_svc = EmbeddingService::new(&self.pool, self.ia.as_ref(), &self.embed_model);
 
         for (i, arquivo) in arquivos.iter().enumerate() {
-            let _ = app.emit(events::ANALYSIS_PROGRESS, serde_json::json!({
-                "analysisId": analysis_id,
-                "processed": i,
-                "total": total,
-                "currentFile": arquivo.name
-            }));
+            let _ = app.emit(
+                events::ANALYSIS_PROGRESS,
+                serde_json::json!({
+                    "analysisId": analysis_id,
+                    "processed": i,
+                    "total": total,
+                    "currentFile": arquivo.name
+                }),
+            );
 
             // Arquivos sem texto extraível são ignorados — não é um erro.
             let texto = match file_repo.get_content(&arquivo.id).await? {
@@ -79,9 +84,12 @@ impl AnaliseService {
                 }
             };
 
-            let _ = app.emit(events::ANALYSIS_EMBEDDING_GENERATION_STARTED, serde_json::json!({
-                "fileId": arquivo.id
-            }));
+            let _ = app.emit(
+                events::ANALYSIS_EMBEDDING_GENERATION_STARTED,
+                serde_json::json!({
+                    "fileId": arquivo.id
+                }),
+            );
 
             match embed_svc.processar(&arquivo.id, &texto).await {
                 Ok(_) => {
@@ -102,9 +110,12 @@ impl AnaliseService {
         let cluster_svc = ClusterService::new(&self.pool, &self.embed_model);
         let clusters_criados = cluster_svc.recalcular().await.unwrap_or(0) as u64;
 
-        let _ = app.emit(events::ANALYSIS_GRAPH_UPDATED, serde_json::json!({
-            "analysisId": analysis_id
-        }));
+        let _ = app.emit(
+            events::ANALYSIS_GRAPH_UPDATED,
+            serde_json::json!({
+                "analysisId": analysis_id
+            }),
+        );
 
         let duration_ms = started.elapsed().as_millis() as u64;
         let stats = AnaliseStats {
@@ -115,16 +126,19 @@ impl AnaliseService {
             duration_ms,
         };
 
-        let _ = app.emit(events::ANALYSIS_COMPLETED, serde_json::json!({
-            "analysisId": analysis_id,
-            "stats": {
-                "processados": stats.processados,
-                "semConteudo": stats.sem_conteudo,
-                "falhos": stats.falhos,
-                "clustersCriados": stats.clusters_criados,
-                "durationMs": stats.duration_ms
-            }
-        }));
+        let _ = app.emit(
+            events::ANALYSIS_COMPLETED,
+            serde_json::json!({
+                "analysisId": analysis_id,
+                "stats": {
+                    "processados": stats.processados,
+                    "semConteudo": stats.sem_conteudo,
+                    "falhos": stats.falhos,
+                    "clustersCriados": stats.clusters_criados,
+                    "durationMs": stats.duration_ms
+                }
+            }),
+        );
 
         Ok(stats)
     }

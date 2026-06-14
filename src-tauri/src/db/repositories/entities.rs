@@ -113,14 +113,21 @@ mod tests {
     }
 
     fn entidade(nome: &str, tipo: EntityType, conf: f64) -> EntidadeExtraida {
-        EntidadeExtraida { name: nome.to_string(), entity_type: tipo, confidence: conf }
+        EntidadeExtraida {
+            name: nome.to_string(),
+            entity_type: tipo,
+            confidence: conf,
+        }
     }
 
     #[tokio::test]
     async fn upsert_entity_insere_e_retorna_id() {
         let pool = pool().await;
         let repo = EntitiesRepository::new(&pool);
-        let id = repo.upsert_entity(&entidade("João", EntityType::Person, 0.9)).await.unwrap();
+        let id = repo
+            .upsert_entity(&entidade("João", EntityType::Person, 0.9))
+            .await
+            .unwrap();
         assert!(!id.is_empty());
     }
 
@@ -133,7 +140,9 @@ mod tests {
         let id2 = repo.upsert_entity(&e).await.unwrap();
         assert_eq!(id1, id2);
         let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM entities WHERE name = 'XPTO'")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count, 1);
     }
 
@@ -145,10 +154,16 @@ mod tests {
         sqlx::query(
             "INSERT INTO files (id, path, relative_path, name, status) VALUES ('f1', '/tmp/f.txt', 'f.txt', 'f.txt', 'discovered')"
         ).execute(&pool).await.unwrap();
-        let eid = erepo.upsert_entity(&entidade("Alpha", EntityType::Project, 0.85)).await.unwrap();
+        let eid = erepo
+            .upsert_entity(&entidade("Alpha", EntityType::Project, 0.85))
+            .await
+            .unwrap();
         erepo.link_file_entity("f1", &eid, 0.85).await.unwrap();
-        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM file_entities WHERE file_id = 'f1'")
-            .fetch_one(&pool).await.unwrap();
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM file_entities WHERE file_id = 'f1'")
+                .fetch_one(&pool)
+                .await
+                .unwrap();
         assert_eq!(count, 1);
     }
 
@@ -159,11 +174,17 @@ mod tests {
         sqlx::query(
             "INSERT INTO files (id, path, relative_path, name, status) VALUES ('f2', '/tmp/g.txt', 'g.txt', 'g.txt', 'discovered')"
         ).execute(&pool).await.unwrap();
-        let eid = erepo.upsert_entity(&entidade("Beta", EntityType::Project, 0.7)).await.unwrap();
+        let eid = erepo
+            .upsert_entity(&entidade("Beta", EntityType::Project, 0.7))
+            .await
+            .unwrap();
         erepo.link_file_entity("f2", &eid, 0.7).await.unwrap();
         erepo.link_file_entity("f2", &eid, 0.9).await.unwrap();
-        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM file_entities WHERE file_id = 'f2'")
-            .fetch_one(&pool).await.unwrap();
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM file_entities WHERE file_id = 'f2'")
+                .fetch_one(&pool)
+                .await
+                .unwrap();
         assert_eq!(count, 1);
     }
 
@@ -174,7 +195,10 @@ mod tests {
         sqlx::query(
             "INSERT INTO files (id, path, relative_path, name, status) VALUES ('f3', '/tmp/h.txt', 'h.txt', 'h.txt', 'discovered')"
         ).execute(&pool).await.unwrap();
-        let eid = erepo.upsert_entity(&entidade("Gamma", EntityType::Topic, 0.75)).await.unwrap();
+        let eid = erepo
+            .upsert_entity(&entidade("Gamma", EntityType::Topic, 0.75))
+            .await
+            .unwrap();
         erepo.link_file_entity("f3", &eid, 0.75).await.unwrap();
         let entities = erepo.find_entities_by_file("f3").await.unwrap();
         assert_eq!(entities.len(), 1);

@@ -19,11 +19,7 @@ impl<'a> RelacoesService<'a> {
 
     /// Infere relações entre as entidades do arquivo e persiste.
     /// Recebe lista de nomes de entidades já extraídas + texto de contexto.
-    pub async fn processar(
-        &self,
-        texto: &str,
-        nomes_entidades: &[String],
-    ) -> AppResult<usize> {
+    pub async fn processar(&self, texto: &str, nomes_entidades: &[String]) -> AppResult<usize> {
         if nomes_entidades.len() < 2 {
             return Ok(0);
         }
@@ -36,19 +32,17 @@ impl<'a> RelacoesService<'a> {
 
         for r in &relacoes {
             // Busca ids das entidades por nome (já devem existir no banco)
-            let src_id: Option<String> = sqlx::query_scalar(
-                "SELECT id FROM entities WHERE name = ?",
-            )
-            .bind(&r.source)
-            .fetch_optional(self.pool)
-            .await?;
+            let src_id: Option<String> =
+                sqlx::query_scalar("SELECT id FROM entities WHERE name = ?")
+                    .bind(&r.source)
+                    .fetch_optional(self.pool)
+                    .await?;
 
-            let tgt_id: Option<String> = sqlx::query_scalar(
-                "SELECT id FROM entities WHERE name = ?",
-            )
-            .bind(&r.target)
-            .fetch_optional(self.pool)
-            .await?;
+            let tgt_id: Option<String> =
+                sqlx::query_scalar("SELECT id FROM entities WHERE name = ?")
+                    .bind(&r.target)
+                    .fetch_optional(self.pool)
+                    .await?;
 
             if let (Some(src), Some(tgt)) = (src_id, tgt_id) {
                 rrepo.upsert_relationship(&src, &tgt, r).await?;
@@ -99,13 +93,19 @@ mod tests {
         });
 
         let svc = RelacoesService::new(&pool, &mock);
-        let count = svc.processar("Alice e Bob trabalham juntos.", &[
-            "Alice".into(), "Bob".into()
-        ]).await.unwrap();
+        let count = svc
+            .processar(
+                "Alice e Bob trabalham juntos.",
+                &["Alice".into(), "Bob".into()],
+            )
+            .await
+            .unwrap();
         assert_eq!(count, 1);
 
         let count_db: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM relationships")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count_db, 1);
     }
 

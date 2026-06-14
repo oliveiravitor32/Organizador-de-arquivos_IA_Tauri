@@ -116,8 +116,14 @@ mod tests {
         inserir_arquivo(&pool, "e1").await;
         let repo = EmbeddingsRepository::new(&pool);
         let b = blob(&[0.1, 0.2, 0.3]);
-        repo.upsert_embedding("e1", "nomic-embed-text", b.clone()).await.unwrap();
-        let emb = repo.find_embedding_by_file("e1", "nomic-embed-text").await.unwrap().unwrap();
+        repo.upsert_embedding("e1", "nomic-embed-text", b.clone())
+            .await
+            .unwrap();
+        let emb = repo
+            .find_embedding_by_file("e1", "nomic-embed-text")
+            .await
+            .unwrap()
+            .unwrap();
         assert_eq!(emb.vector, b);
     }
 
@@ -126,10 +132,18 @@ mod tests {
         let pool = pool().await;
         inserir_arquivo(&pool, "e2").await;
         let repo = EmbeddingsRepository::new(&pool);
-        repo.upsert_embedding("e2", "nomic-embed-text", blob(&[0.1])).await.unwrap();
+        repo.upsert_embedding("e2", "nomic-embed-text", blob(&[0.1]))
+            .await
+            .unwrap();
         let b2 = blob(&[0.9, 0.8]);
-        repo.upsert_embedding("e2", "nomic-embed-text", b2.clone()).await.unwrap();
-        let emb = repo.find_embedding_by_file("e2", "nomic-embed-text").await.unwrap().unwrap();
+        repo.upsert_embedding("e2", "nomic-embed-text", b2.clone())
+            .await
+            .unwrap();
+        let emb = repo
+            .find_embedding_by_file("e2", "nomic-embed-text")
+            .await
+            .unwrap()
+            .unwrap();
         assert_eq!(emb.vector, b2);
     }
 
@@ -139,8 +153,12 @@ mod tests {
         inserir_arquivo(&pool, "e3").await;
         inserir_arquivo(&pool, "e4").await;
         let repo = EmbeddingsRepository::new(&pool);
-        repo.upsert_embedding("e3", "nomic-embed-text", blob(&[0.1])).await.unwrap();
-        repo.upsert_embedding("e4", "outro-modelo", blob(&[0.2])).await.unwrap();
+        repo.upsert_embedding("e3", "nomic-embed-text", blob(&[0.1]))
+            .await
+            .unwrap();
+        repo.upsert_embedding("e4", "outro-modelo", blob(&[0.2]))
+            .await
+            .unwrap();
         let embs = repo.find_all_embeddings("nomic-embed-text").await.unwrap();
         assert_eq!(embs.len(), 1);
         assert_eq!(embs[0].file_id, "e3");
@@ -150,7 +168,10 @@ mod tests {
     async fn find_embedding_by_file_retorna_none_se_ausente() {
         let pool = pool().await;
         let repo = EmbeddingsRepository::new(&pool);
-        let result = repo.find_embedding_by_file("inexistente", "nomic-embed-text").await.unwrap();
+        let result = repo
+            .find_embedding_by_file("inexistente", "nomic-embed-text")
+            .await
+            .unwrap();
         assert!(result.is_none());
     }
 }

@@ -99,9 +99,7 @@ impl SugestaoMotorService {
                 continue;
             }
 
-            let file_ids = clusters_repo
-                .find_members_by_cluster(&cluster.id)
-                .await?;
+            let file_ids = clusters_repo.find_members_by_cluster(&cluster.id).await?;
 
             if file_ids.len() < 2 {
                 descartadas += 1;
@@ -185,7 +183,11 @@ impl SugestaoMotorService {
         }
 
         let duration_ms = inicio.elapsed().as_millis() as u64;
-        let stats = SugestaoStats { geradas, descartadas, duration_ms };
+        let stats = SugestaoStats {
+            geradas,
+            descartadas,
+            duration_ms,
+        };
 
         Ok((stats, criadas))
     }
@@ -201,7 +203,10 @@ impl SugestaoMotorService {
         let mut indices_validos: Vec<usize> = Vec::new();
 
         for (i, fid) in file_ids.iter().enumerate() {
-            if let Some(emb) = embeddings_repo.find_embedding_by_file(fid, EMBED_MODEL).await? {
+            if let Some(emb) = embeddings_repo
+                .find_embedding_by_file(fid, EMBED_MODEL)
+                .await?
+            {
                 let v: Vec<f32> = cast_slice(&emb.vector).to_vec();
                 vetores.push(v);
                 indices_validos.push(i);
@@ -295,9 +300,7 @@ mod tests {
     fn mock_ia_com_erro() -> Arc<dyn ServicoIa> {
         let mut mock = MockServicoIa::new();
         mock.expect_gerar_nome_cluster().returning(|_| {
-            Box::pin(async {
-                Err(crate::error::AppError::Internal("ollama offline".into()))
-            })
+            Box::pin(async { Err(crate::error::AppError::Internal("ollama offline".into())) })
         });
         Arc::new(mock)
     }
@@ -345,11 +348,21 @@ mod tests {
         inserir_arquivo(&pool, "f1", "/docs/contrato.pdf", "contrato.pdf").await;
         inserir_arquivo(&pool, "f2", "/projetos/cronograma.xlsx", "cronograma.xlsx").await;
 
-        let cid = clusters_repo.upsert_cluster("Cluster A", None, 0.85).await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f1").await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f2").await.unwrap();
+        let cid = clusters_repo
+            .upsert_cluster("Cluster A", None, 0.85)
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f1")
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f2")
+            .await
+            .unwrap();
 
-        let motor = SugestaoMotorService::new(pool.clone(), mock_ia_com_titulo("Documentos do Projeto"));
+        let motor =
+            SugestaoMotorService::new(pool.clone(), mock_ia_com_titulo("Documentos do Projeto"));
         let (stats, criadas) = motor.executar_pipeline().await.unwrap();
 
         assert_eq!(stats.geradas, 1);
@@ -375,9 +388,18 @@ mod tests {
         inserir_arquivo(&pool, "f1", "/docs/a.pdf", "a.pdf").await;
         inserir_arquivo(&pool, "f2", "/docs/b.pdf", "b.pdf").await;
 
-        let cid = clusters_repo.upsert_cluster("Mesmo Dir", None, 0.9).await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f1").await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f2").await.unwrap();
+        let cid = clusters_repo
+            .upsert_cluster("Mesmo Dir", None, 0.9)
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f1")
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f2")
+            .await
+            .unwrap();
 
         let motor = SugestaoMotorService::new(pool.clone(), mock_ia_com_titulo("X"));
         let (stats, criadas) = motor.executar_pipeline().await.unwrap();
@@ -396,9 +418,18 @@ mod tests {
         inserir_arquivo(&pool, "f2", "/b/y.pdf", "y.pdf").await;
 
         // Confiança 0.30 — abaixo do limiar (ADR-024)
-        let cid = clusters_repo.upsert_cluster("Fraco", None, 0.30).await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f1").await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f2").await.unwrap();
+        let cid = clusters_repo
+            .upsert_cluster("Fraco", None, 0.30)
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f1")
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f2")
+            .await
+            .unwrap();
 
         let motor = SugestaoMotorService::new(pool.clone(), mock_ia_com_titulo("X"));
         let (stats, criadas) = motor.executar_pipeline().await.unwrap();
@@ -417,10 +448,22 @@ mod tests {
         inserir_arquivo(&pool, "f2", "/b/y.pdf", "y.pdf").await;
         inserir_arquivo(&pool, "f3", "/c/z.pdf", "z.pdf").await;
 
-        let cid = clusters_repo.upsert_cluster("Sem LLM", None, 0.8).await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f1").await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f2").await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f3").await.unwrap();
+        let cid = clusters_repo
+            .upsert_cluster("Sem LLM", None, 0.8)
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f1")
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f2")
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f3")
+            .await
+            .unwrap();
 
         let motor = SugestaoMotorService::new(pool.clone(), mock_ia_com_erro());
         let (stats, criadas) = motor.executar_pipeline().await.unwrap();
@@ -440,9 +483,18 @@ mod tests {
         inserir_arquivo(&pool, "f1", "/a/x.pdf", "x.pdf").await;
         inserir_arquivo(&pool, "f2", "/b/y.pdf", "y.pdf").await;
 
-        let cid = clusters_repo.upsert_cluster("Op Test", None, 0.8).await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f1").await.unwrap();
-        clusters_repo.add_cluster_member_file(&cid, "f2").await.unwrap();
+        let cid = clusters_repo
+            .upsert_cluster("Op Test", None, 0.8)
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f1")
+            .await
+            .unwrap();
+        clusters_repo
+            .add_cluster_member_file(&cid, "f2")
+            .await
+            .unwrap();
 
         let motor = SugestaoMotorService::new(pool.clone(), mock_ia_com_titulo("T"));
         let (_, criadas) = motor.executar_pipeline().await.unwrap();

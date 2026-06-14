@@ -43,11 +43,10 @@ impl<'a> ClustersRepository<'a> {
         .execute(self.pool)
         .await?;
 
-        let real_id: String =
-            sqlx::query_scalar("SELECT id FROM clusters WHERE name = ?")
-                .bind(name)
-                .fetch_one(self.pool)
-                .await?;
+        let real_id: String = sqlx::query_scalar("SELECT id FROM clusters WHERE name = ?")
+            .bind(name)
+            .fetch_one(self.pool)
+            .await?;
 
         Ok(real_id)
     }
@@ -119,7 +118,10 @@ mod tests {
     async fn upsert_cluster_cria_e_retorna_id() {
         let pool = pool().await;
         let repo = ClustersRepository::new(&pool);
-        let id = repo.upsert_cluster("Finanças", Some("Docs financeiros"), 0.85).await.unwrap();
+        let id = repo
+            .upsert_cluster("Finanças", Some("Docs financeiros"), 0.85)
+            .await
+            .unwrap();
         assert!(!id.is_empty());
     }
 
@@ -128,10 +130,15 @@ mod tests {
         let pool = pool().await;
         let repo = ClustersRepository::new(&pool);
         let id1 = repo.upsert_cluster("Tech", None, 0.7).await.unwrap();
-        let id2 = repo.upsert_cluster("Tech", Some("updated"), 0.9).await.unwrap();
+        let id2 = repo
+            .upsert_cluster("Tech", Some("updated"), 0.9)
+            .await
+            .unwrap();
         assert_eq!(id1, id2);
         let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM clusters WHERE name = 'Tech'")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count, 1);
     }
 

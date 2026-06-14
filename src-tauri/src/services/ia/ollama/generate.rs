@@ -85,9 +85,8 @@ pub async fn extrair_entidades(
         .await
         .map_err(|e| AppError::Internal(format!("resposta inválida do Ollama: {e}")))?;
 
-    let parsed: EntidadesJson = serde_json::from_str(&gen.response).unwrap_or(EntidadesJson {
-        entities: vec![],
-    });
+    let parsed: EntidadesJson =
+        serde_json::from_str(&gen.response).unwrap_or(EntidadesJson { entities: vec![] });
 
     let entidades = parsed
         .entities
@@ -170,9 +169,8 @@ pub async fn inferir_relacoes(
         .await
         .map_err(|e| AppError::Internal(format!("resposta inválida do Ollama: {e}")))?;
 
-    let parsed: RelacoesJson = serde_json::from_str(&gen.response).unwrap_or(RelacoesJson {
-        relations: vec![],
-    });
+    let parsed: RelacoesJson =
+        serde_json::from_str(&gen.response).unwrap_or(RelacoesJson { relations: vec![] });
 
     let relacoes = parsed
         .relations
@@ -298,7 +296,11 @@ fn finalizar_nome(s: &str) -> String {
         .trim();
 
     // Pega só a primeira linha não vazia (alguns modelos quebram com explicação extra)
-    let primeira = limpo.lines().find(|l| !l.trim().is_empty()).unwrap_or(limpo).trim();
+    let primeira = limpo
+        .lines()
+        .find(|l| !l.trim().is_empty())
+        .unwrap_or(limpo)
+        .trim();
 
     // Limita a 5 palavras, máx 80 chars
     let palavras: Vec<&str> = primeira.split_whitespace().take(5).collect();
@@ -316,7 +318,10 @@ mod tests {
 
     #[test]
     fn sanitizar_nome_texto_puro() {
-        assert_eq!(sanitizar_nome_cluster("Documentos Fiscais"), "Documentos Fiscais");
+        assert_eq!(
+            sanitizar_nome_cluster("Documentos Fiscais"),
+            "Documentos Fiscais"
+        );
     }
 
     #[test]

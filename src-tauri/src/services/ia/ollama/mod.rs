@@ -22,7 +22,11 @@ pub struct OllamaService {
 }
 
 impl OllamaService {
-    pub fn new(base_url: impl Into<String>, llm_model: impl Into<String>, embed_model: impl Into<String>) -> Self {
+    pub fn new(
+        base_url: impl Into<String>,
+        llm_model: impl Into<String>,
+        embed_model: impl Into<String>,
+    ) -> Self {
         let client = reqwest::Client::builder()
             .timeout(std::time::Duration::from_secs(120))
             .build()
@@ -56,16 +60,33 @@ impl ServicoIa for OllamaService {
         texto: &str,
         entidades: &[String],
     ) -> AppResult<Vec<RelacaoInferida>> {
-        generate::inferir_relacoes(&self.client, &self.base_url, &self.llm_model, texto, entidades)
-            .await
+        generate::inferir_relacoes(
+            &self.client,
+            &self.base_url,
+            &self.llm_model,
+            texto,
+            entidades,
+        )
+        .await
     }
 
     async fn gerar_nome_cluster(&self, nomes_arquivos: Vec<String>) -> AppResult<String> {
-        generate::gerar_nome_cluster(&self.client, &self.base_url, &self.llm_model, nomes_arquivos)
-            .await
+        generate::gerar_nome_cluster(
+            &self.client,
+            &self.base_url,
+            &self.llm_model,
+            nomes_arquivos,
+        )
+        .await
     }
 
     async fn verificar_saude(&self) -> AppResult<()> {
-        health::verificar(&self.client, &self.base_url, &self.llm_model, &self.embed_model).await
+        health::verificar(
+            &self.client,
+            &self.base_url,
+            &self.llm_model,
+            &self.embed_model,
+        )
+        .await
     }
 }

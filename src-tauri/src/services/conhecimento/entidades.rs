@@ -25,7 +25,8 @@ impl<'a> ExtracaoEntidadesService<'a> {
 
         for e in &entidades {
             let entity_id = repo.upsert_entity(e).await?;
-            repo.link_file_entity(file_id, &entity_id, e.confidence).await?;
+            repo.link_file_entity(file_id, &entity_id, e.confidence)
+                .await?;
         }
 
         Ok(total)
@@ -67,11 +68,16 @@ mod tests {
         assert_eq!(count, 1);
 
         let count_db: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM entities")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count_db, 1);
 
-        let count_link: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM file_entities WHERE file_id = 'f1'")
-            .fetch_one(&pool).await.unwrap();
+        let count_link: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM file_entities WHERE file_id = 'f1'")
+                .fetch_one(&pool)
+                .await
+                .unwrap();
         assert_eq!(count_link, 1);
     }
 
@@ -83,7 +89,8 @@ mod tests {
         ).execute(&pool).await.unwrap();
 
         let mut mock = MockServicoIa::new();
-        mock.expect_extrair_entidades().returning(|_| Box::pin(async { Ok(vec![]) }));
+        mock.expect_extrair_entidades()
+            .returning(|_| Box::pin(async { Ok(vec![]) }));
 
         let svc = ExtracaoEntidadesService::new(&pool, &mock);
         let count = svc.processar("f2", "texto sem entidades").await.unwrap();

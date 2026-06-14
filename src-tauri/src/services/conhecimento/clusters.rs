@@ -18,7 +18,10 @@ pub struct ClusterService<'a> {
 
 impl<'a> ClusterService<'a> {
     pub fn new(pool: &'a SqlitePool, embed_model: impl Into<String>) -> Self {
-        Self { pool, embed_model: embed_model.into() }
+        Self {
+            pool,
+            embed_model: embed_model.into(),
+        }
     }
 
     /// Reconstrói clusters a partir de todos os embeddings existentes.
@@ -122,7 +125,11 @@ fn media_similaridades(members: &[usize], vecs: &[(String, Array1<f32>)]) -> f32
             count += 1;
         }
     }
-    if count == 0 { 0.0 } else { soma / count as f32 }
+    if count == 0 {
+        0.0
+    } else {
+        soma / count as f32
+    }
 }
 
 #[cfg(test)]
@@ -176,7 +183,11 @@ mod tests {
         let blob_sim: Vec<u8> = bytemuck::cast_slice(&similar).to_vec();
         let blob_dif: Vec<u8> = bytemuck::cast_slice(&diferente).to_vec();
 
-        for (fid, blob) in [("fa", blob_sim.clone()), ("fb", blob_sim.clone()), ("fc", blob_dif)] {
+        for (fid, blob) in [
+            ("fa", blob_sim.clone()),
+            ("fb", blob_sim.clone()),
+            ("fc", blob_dif),
+        ] {
             let id = uuid::Uuid::new_v4().to_string();
             sqlx::query(
                 "INSERT INTO embeddings (id, file_id, model, vector, created_at) VALUES (?, ?, 'nomic-embed-text', ?, '2024-01-01')"

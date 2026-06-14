@@ -73,7 +73,10 @@ impl ScanService {
         let mut stats = ScanStats::default();
 
         self.app
-            .emit(events::SCAN_STARTED, serde_json::json!({ "scanId": scan_id }))
+            .emit(
+                events::SCAN_STARTED,
+                serde_json::json!({ "scanId": scan_id }),
+            )
             .map_err(|e| AppError::Internal(e.to_string()))?;
 
         // filter_entry poda o diretório ANTES de entrar — sem custo de travessia interna.
@@ -85,7 +88,10 @@ impl ScanService {
         for entry in walker {
             if *cancel_rx.borrow() {
                 self.app
-                    .emit(events::SCAN_CANCELLED, serde_json::json!({ "scanId": scan_id }))
+                    .emit(
+                        events::SCAN_CANCELLED,
+                        serde_json::json!({ "scanId": scan_id }),
+                    )
                     .ok();
                 return Ok(stats);
             }
@@ -200,10 +206,7 @@ fn deve_ignorar(entry: &DirEntry, user_ignore: &[String]) -> bool {
     }
 
     // Lista padrão (case-insensitive no Windows).
-    if DEFAULT_IGNORE
-        .iter()
-        .any(|p| name.eq_ignore_ascii_case(p))
-    {
+    if DEFAULT_IGNORE.iter().any(|p| name.eq_ignore_ascii_case(p)) {
         return true;
     }
 
@@ -219,9 +222,7 @@ mod tests {
 
     fn dir_entry_mock(name: &str) -> bool {
         // Testa a lógica de nome diretamente, sem DirEntry real.
-        DEFAULT_IGNORE
-            .iter()
-            .any(|p| name.eq_ignore_ascii_case(p))
+        DEFAULT_IGNORE.iter().any(|p| name.eq_ignore_ascii_case(p))
     }
 
     #[test]

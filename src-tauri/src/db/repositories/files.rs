@@ -341,7 +341,10 @@ mod tests {
         .unwrap();
 
         assert_eq!(count, 1, "deve existir exatamente um registro");
-        assert_eq!(content, "texto atualizado", "deve conter o valor mais recente");
+        assert_eq!(
+            content, "texto atualizado",
+            "deve conter o valor mais recente"
+        );
     }
 
     /// UC-001 CA-004 / UC-002: find_discovered_by_scan retorna só arquivos do scan correto.
@@ -372,7 +375,9 @@ mod tests {
 
         let resultado = repo.find_discovered_by_scan("scan-a").await.unwrap();
         assert_eq!(resultado.len(), 3);
-        assert!(resultado.iter().all(|r| r.scan_id.as_deref() == Some("scan-a")));
+        assert!(resultado
+            .iter()
+            .all(|r| r.scan_id.as_deref() == Some("scan-a")));
     }
 
     /// UC-002: find_discovered_by_scan exclui arquivos com status diferente de discovered.
@@ -392,7 +397,11 @@ mod tests {
         repo.update_status(&id, FileStatus::Indexed).await.unwrap();
 
         let resultado = repo.find_discovered_by_scan("scan-filtro").await.unwrap();
-        assert_eq!(resultado.len(), 0, "indexado não deve aparecer em discovered");
+        assert_eq!(
+            resultado.len(),
+            0,
+            "indexado não deve aparecer em discovered"
+        );
     }
 
     /// count_by_scan_and_status retorna contagem correta por status.

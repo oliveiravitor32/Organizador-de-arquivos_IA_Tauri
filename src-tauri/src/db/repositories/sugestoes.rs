@@ -76,10 +76,7 @@ impl<'a> SugestoesRepository<'a> {
     }
 
     /// Retorna todas as sugestões, opcionalmente filtradas por status.
-    pub async fn find_suggestions(
-        &self,
-        status: Option<&str>,
-    ) -> AppResult<Vec<Sugestao>> {
+    pub async fn find_suggestions(&self, status: Option<&str>) -> AppResult<Vec<Sugestao>> {
         let rows = match status {
             Some(s) => {
                 sqlx::query_as::<_, Sugestao>(
@@ -90,11 +87,9 @@ impl<'a> SugestoesRepository<'a> {
                 .await?
             }
             None => {
-                sqlx::query_as::<_, Sugestao>(
-                    "SELECT * FROM suggestions ORDER BY confianca DESC",
-                )
-                .fetch_all(self.pool)
-                .await?
+                sqlx::query_as::<_, Sugestao>("SELECT * FROM suggestions ORDER BY confianca DESC")
+                    .fetch_all(self.pool)
+                    .await?
             }
         };
 
@@ -103,12 +98,10 @@ impl<'a> SugestoesRepository<'a> {
 
     /// Retorna uma sugestão por id.
     pub async fn find_suggestion_by_id(&self, id: &str) -> AppResult<Option<Sugestao>> {
-        let row = sqlx::query_as::<_, Sugestao>(
-            "SELECT * FROM suggestions WHERE id = ?",
-        )
-        .bind(id)
-        .fetch_optional(self.pool)
-        .await?;
+        let row = sqlx::query_as::<_, Sugestao>("SELECT * FROM suggestions WHERE id = ?")
+            .bind(id)
+            .fetch_optional(self.pool)
+            .await?;
 
         Ok(row)
     }
@@ -159,7 +152,14 @@ mod tests {
         let repo = SugestoesRepository::new(&pool);
 
         let id = repo
-            .insert_suggestion("agrupamento", Some("Grupo A"), Some("Desc"), 0.85, None, None)
+            .insert_suggestion(
+                "agrupamento",
+                Some("Grupo A"),
+                Some("Desc"),
+                0.85,
+                None,
+                None,
+            )
             .await
             .unwrap();
 

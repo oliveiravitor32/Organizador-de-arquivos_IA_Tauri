@@ -99,12 +99,11 @@ pub async fn explicar_sugestao(
 
     // Sinaliza desatualizada se o cluster_id não existe mais
     let desatualizada = if let Some(cid) = &sugestao.cluster_id {
-        let count: i64 =
-            sqlx::query_scalar("SELECT COUNT(*) FROM clusters WHERE id = ?")
-                .bind(cid)
-                .fetch_one(&state.db)
-                .await
-                .unwrap_or(0);
+        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM clusters WHERE id = ?")
+            .bind(cid)
+            .fetch_one(&state.db)
+            .await
+            .unwrap_or(0);
         count == 0
     } else {
         false

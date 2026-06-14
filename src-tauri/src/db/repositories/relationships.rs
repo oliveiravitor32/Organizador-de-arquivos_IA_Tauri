@@ -112,7 +112,10 @@ mod tests {
         inserir_entidade(&pool, "eid1", "Alpha").await;
         inserir_entidade(&pool, "eid2", "Beta").await;
         let repo = RelationshipsRepository::new(&pool);
-        let id = repo.upsert_relationship("eid1", "eid2", &relacao("related_to", 0.8)).await.unwrap();
+        let id = repo
+            .upsert_relationship("eid1", "eid2", &relacao("related_to", 0.8))
+            .await
+            .unwrap();
         assert!(!id.is_empty());
     }
 
@@ -127,7 +130,9 @@ mod tests {
         let id2 = repo.upsert_relationship("eid3", "eid4", &r).await.unwrap();
         assert_eq!(id1, id2);
         let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM relationships")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count, 1);
     }
 
@@ -137,7 +142,9 @@ mod tests {
         inserir_entidade(&pool, "eid5", "Epsilon").await;
         inserir_entidade(&pool, "eid6", "Zeta").await;
         let repo = RelationshipsRepository::new(&pool);
-        repo.upsert_relationship("eid5", "eid6", &relacao("derived_from", 0.9)).await.unwrap();
+        repo.upsert_relationship("eid5", "eid6", &relacao("derived_from", 0.9))
+            .await
+            .unwrap();
         let rels = repo.find_relationships_by_entity("eid5").await.unwrap();
         assert_eq!(rels.len(), 1);
         assert_eq!(rels[0].2, "derived_from");

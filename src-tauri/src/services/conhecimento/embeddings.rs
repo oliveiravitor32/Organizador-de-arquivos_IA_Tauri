@@ -14,7 +14,11 @@ pub struct EmbeddingService<'a> {
 
 impl<'a> EmbeddingService<'a> {
     pub fn new(pool: &'a SqlitePool, ia: &'a dyn ServicoIa, model: impl Into<String>) -> Self {
-        Self { pool, ia, model: model.into() }
+        Self {
+            pool,
+            ia,
+            model: model.into(),
+        }
     }
 
     /// Gera embedding para o texto e persiste no banco. Retorna o blob serializado.
@@ -23,7 +27,8 @@ impl<'a> EmbeddingService<'a> {
         let blob = serializar_vetor(&vetor);
 
         let repo = EmbeddingsRepository::new(self.pool);
-        repo.upsert_embedding(file_id, &self.model, blob.clone()).await?;
+        repo.upsert_embedding(file_id, &self.model, blob.clone())
+            .await?;
 
         Ok(blob)
     }
@@ -32,8 +37,8 @@ impl<'a> EmbeddingService<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::services::ia::MockServicoIa;
     use crate::services::ia::ollama::embed::deserializar_vetor;
+    use crate::services::ia::MockServicoIa;
 
     async fn pool() -> SqlitePool {
         let pool = SqlitePool::connect(":memory:").await.unwrap();
@@ -61,7 +66,9 @@ mod tests {
 
         // Confirma persistência
         let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM embeddings WHERE file_id = 'f1'")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count, 1);
     }
 
@@ -82,7 +89,9 @@ mod tests {
         svc.processar("f2", "texto").await.unwrap();
 
         let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM embeddings WHERE file_id = 'f2'")
-            .fetch_one(&pool).await.unwrap();
+            .fetch_one(&pool)
+            .await
+            .unwrap();
         assert_eq!(count, 1);
     }
 }
