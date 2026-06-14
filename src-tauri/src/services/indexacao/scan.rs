@@ -11,6 +11,7 @@ use crate::db::repositories::files::FileRepository;
 use crate::domain::arquivo::NewFile;
 use crate::domain::scan::{ScanProgress, ScanStats};
 use crate::error::{AppError, AppResult};
+use crate::events;
 
 const PROGRESS_INTERVAL: u64 = 50;
 
@@ -72,7 +73,7 @@ impl ScanService {
         let mut stats = ScanStats::default();
 
         self.app
-            .emit("scan://started", serde_json::json!({ "scanId": scan_id }))
+            .emit(events::SCAN_STARTED, serde_json::json!({ "scanId": scan_id }))
             .map_err(|e| AppError::Internal(e.to_string()))?;
 
         // filter_entry poda o diretório ANTES de entrar — sem custo de travessia interna.
@@ -84,7 +85,7 @@ impl ScanService {
         for entry in walker {
             if *cancel_rx.borrow() {
                 self.app
-                    .emit("scan://cancelled", serde_json::json!({ "scanId": scan_id }))
+                    .emit(events::SCAN_CANCELLED, serde_json::json!({ "scanId": scan_id }))
                     .ok();
                 return Ok(stats);
             }
@@ -105,7 +106,7 @@ impl ScanService {
                     stats.total_dirs += 1;
                     self.app
                         .emit(
-                            "scan://directory_discovered",
+                            events::SCAN_DIRECTORY_DISCOVERED,
                             serde_json::json!({
                                 "scanId": scan_id,
                                 "path": path.to_string_lossy()
@@ -149,7 +150,7 @@ impl ScanService {
 
             self.app
                 .emit(
-                    "scan://file_discovered",
+                    events::SCAN_FILE_DISCOVERED,
                     serde_json::json!({ "scanId": scan_id, "path": abs_path }),
                 )
                 .ok();
@@ -161,7 +162,7 @@ impl ScanService {
                     dirs_found: stats.total_dirs,
                     current_path: abs_path,
                 };
-                self.app.emit("scan://progress", &progress).ok();
+                self.app.emit(events::SCAN_PROGRESS, &progress).ok();
             }
         }
 
@@ -169,7 +170,7 @@ impl ScanService {
 
         self.app
             .emit(
-                "scan://completed",
+                events::SCAN_COMPLETED,
                 serde_json::json!({
                     "scanId": scan_id,
                     "totalArquivos": stats.total_files,

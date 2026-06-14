@@ -2,11 +2,12 @@
 
 use std::path::PathBuf;
 
-use tauri::{AppHandle, Manager, State};
+use tauri::{AppHandle, Emitter, Manager, State};
 use uuid::Uuid;
 
 use crate::core::state::AppState;
 use crate::error::{AppError, AppResult};
+use crate::events;
 use crate::services::indexacao::{indexing::IndexingService, scan::ScanService};
 
 /// Inicia o escaneamento recursivo de um diretório (UC-001).
@@ -34,9 +35,15 @@ pub async fn escanear_diretorio(
 
     tauri::async_runtime::spawn(async move {
         let service = ScanService::new(app_clone.clone(), pool);
-        let _ = service
+        let result = service
             .escanear(&scan_id_clone, &path, &ignore, cancel_rx)
             .await;
+        if let Err(e) = result {
+            let _ = app_clone.emit(
+                events::SCAN_FAILED,
+                serde_json::json!({ "scanId": scan_id_clone, "error": e.to_string() }),
+            );
+        }
         if let Some(s) = app_clone.try_state::<AppState>() {
             s.remove_cancel(&scan_id_clone);
         }
@@ -63,9 +70,15 @@ pub async fn indexar_arquivos(
 
     tauri::async_runtime::spawn(async move {
         let service = IndexingService::new(app_clone.clone(), pool);
-        let _ = service
+        let result = service
             .indexar(&indexing_id_clone, &scan_id, cancel_rx)
             .await;
+        if let Err(e) = result {
+            let _ = app_clone.emit(
+                events::INDEXING_FAILED,
+                serde_json::json!({ "indexingId": indexing_id_clone, "error": e.to_string() }),
+            );
+        }
         if let Some(s) = app_clone.try_state::<AppState>() {
             s.remove_cancel(&indexing_id_clone);
         }

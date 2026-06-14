@@ -27,6 +27,11 @@ vi.mock("@/ipc/events", () => ({
   onAnalysisProgress: vi.fn(() => Promise.resolve(() => {})),
   onAnalysisCompleted: vi.fn(() => Promise.resolve(() => {})),
   onAnalysisFailed: vi.fn(() => Promise.resolve(() => {})),
+  // Marco 3 — listeners usados por Sugestoes.tsx
+  onSuggestionStarted: vi.fn(() => Promise.resolve(() => {})),
+  onSuggestionCreated: vi.fn(() => Promise.resolve(() => {})),
+  onSuggestionCompleted: vi.fn(() => Promise.resolve(() => {})),
+  onSuggestionFailed: vi.fn(() => Promise.resolve(() => {})),
 }));
 
 vi.mock("@/ipc/commands", () => ({
@@ -40,6 +45,9 @@ vi.mock("@/ipc/commands", () => ({
   cancelarOperacao: vi.fn(),
   consultarIndexacao: vi.fn(() => Promise.resolve(null)),
   analisarArquivos: vi.fn(),
+  gerarSugestoes: vi.fn(),
+  explicarSugestao: vi.fn(),
+  listarSugestoes: vi.fn(),
 }));
 
 import App from "./App";

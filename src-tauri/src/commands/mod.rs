@@ -2,6 +2,7 @@
 
 pub mod conhecimento;
 pub mod descoberta;
+pub mod sugestoes;
 
 use tauri::{AppHandle, Emitter};
 

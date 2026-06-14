@@ -11,6 +11,7 @@ use crate::db::repositories::files::FileRepository;
 use crate::domain::arquivo::{FileContent, FileStatus};
 use crate::domain::scan::{IndexingProgress, IndexingStats};
 use crate::error::{AppError, AppResult};
+use crate::events;
 use crate::services::indexacao::extratores;
 
 pub struct IndexingService {
@@ -35,7 +36,7 @@ impl IndexingService {
 
         self.app
             .emit(
-                "indexing://started",
+                events::INDEXING_STARTED,
                 serde_json::json!({ "indexingId": indexing_id, "scanId": scan_id }),
             )
             .map_err(|e| AppError::Internal(e.to_string()))?;
@@ -48,7 +49,7 @@ impl IndexingService {
             if *cancel_rx.borrow() {
                 self.app
                     .emit(
-                        "indexing://cancelled",
+                        events::INDEXING_CANCELLED,
                         serde_json::json!({ "indexingId": indexing_id }),
                     )
                     .ok();
@@ -57,7 +58,7 @@ impl IndexingService {
 
             self.app
                 .emit(
-                    "indexing://file_started",
+                    events::INDEXING_FILE_STARTED,
                     serde_json::json!({ "indexingId": indexing_id, "fileId": arquivo.id }),
                 )
                 .ok();
@@ -77,7 +78,7 @@ impl IndexingService {
                 total,
                 current_file: arquivo.path.clone(),
             };
-            self.app.emit("indexing://progress", &progress).ok();
+            self.app.emit(events::INDEXING_PROGRESS, &progress).ok();
         }
 
         stats.duration_ms = inicio.elapsed().as_millis() as u64;
@@ -96,7 +97,7 @@ impl IndexingService {
             state.store_resultado(indexing_id, payload.clone());
         }
 
-        self.app.emit("indexing://completed", payload).ok();
+        self.app.emit(events::INDEXING_COMPLETED, payload).ok();
 
         Ok(stats)
     }

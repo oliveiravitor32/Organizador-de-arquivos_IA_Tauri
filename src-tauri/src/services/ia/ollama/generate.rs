@@ -12,7 +12,17 @@ struct GenerateRequest<'a> {
     model: &'a str,
     prompt: String,
     stream: bool,
-    format: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    format: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    system: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    options: Option<GenerateOptions>,
+}
+
+#[derive(Serialize)]
+struct GenerateOptions {
+    temperature: f32,
 }
 
 #[derive(Deserialize)]
@@ -58,7 +68,9 @@ pub async fn extrair_entidades(
         model,
         prompt,
         stream: false,
-        format: "json",
+        format: Some("json"),
+        system: None,
+        options: None,
     };
 
     let resp = client
@@ -141,7 +153,9 @@ pub async fn inferir_relacoes(
         model,
         prompt,
         stream: false,
-        format: "json",
+        format: Some("json"),
+        system: None,
+        options: None,
     };
 
     let resp = client
@@ -180,9 +194,160 @@ pub async fn inferir_relacoes(
     Ok(relacoes)
 }
 
+// ─── Nome de Cluster ──────────────────────────────────────────────────────────
+
+pub async fn gerar_nome_cluster(
+    client: &reqwest::Client,
+    base_url: &str,
+    model: &str,
+    nomes_arquivos: Vec<String>,
+) -> AppResult<String> {
+    let total = nomes_arquivos.len();
+    let lista = nomes_arquivos
+        .iter()
+        .map(|n| format!("- {n}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    let prompt = format!(
+        "Analise os nomes dos arquivos abaixo e descubra o TEMA GERAL do grupo \
+         (não foque em um arquivo específico). Crie um TÍTULO curto em PORTUGUÊS DO BRASIL \
+         com no máximo 4 palavras, no estilo \"Documentos de X\" ou \"Grupo X\".\n\n\
+         Exemplos de bons títulos:\n\
+         - Documentos de TCC\n\
+         - Notas fiscais 2024\n\
+         - Artigos de Pesquisa\n\
+         - Contratos do Projeto Alpha\n\n\
+         REGRAS OBRIGATÓRIAS:\n\
+         - O título DEVE estar em português do Brasil.\n\
+         - NÃO use inglês em hipótese alguma.\n\
+         - NÃO escreva explicações, JSON ou aspas.\n\
+         - Responda APENAS com o título.\n\n\
+         Arquivos do grupo (mostrando até 15 de {total} total):\n{lista}\n\n\
+         Título em português:"
+    );
+
+    let body = GenerateRequest {
+        model,
+        prompt,
+        stream: false,
+        format: None, // texto puro — não forçar JSON
+        system: Some(
+            "Você é um assistente que SEMPRE responde em português do Brasil. \
+             Sua tarefa é nomear grupos de arquivos de forma curta e descritiva. \
+             Você NUNCA responde em inglês. Você NUNCA dá explicações. \
+             Você responde apenas com o título solicitado, em uma única linha.",
+        ),
+        options: Some(GenerateOptions { temperature: 0.2 }),
+    };
+
+    let resp = client
+        .post(format!("{base_url}/api/generate"))
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| AppError::Internal(format!("erro ao chamar Ollama (nome cluster): {e}")))?;
+
+    let gen: GenerateResponse = resp
+        .json()
+        .await
+        .map_err(|e| AppError::Internal(format!("resposta inválida do Ollama: {e}")))?;
+
+    let nome = sanitizar_nome_cluster(&gen.response);
+    if nome.is_empty() {
+        return Err(AppError::Internal("Ollama retornou nome vazio".into()));
+    }
+
+    Ok(nome)
+}
+
+/// Sanitiza a resposta do LLM: remove blocos <think>, JSON acidental, aspas
+/// e limita a 5 palavras / 80 chars.
+fn sanitizar_nome_cluster(raw: &str) -> String {
+    let mut texto = raw.trim().to_string();
+
+    // Remove blocos <think>...</think> (qwen3 às vezes inclui)
+    while let (Some(ini), Some(fim)) = (texto.find("<think>"), texto.find("</think>")) {
+        if fim > ini {
+            texto.replace_range(ini..fim + "</think>".len(), "");
+        } else {
+            break;
+        }
+    }
+
+    let texto = texto.trim();
+
+    // Se o modelo devolveu JSON, tentar extrair campo "nome" ou similar
+    if texto.starts_with('{') {
+        if let Ok(val) = serde_json::from_str::<serde_json::Value>(texto) {
+            for chave in &["nome", "titulo", "name", "title"] {
+                if let Some(s) = val.get(chave).and_then(|v| v.as_str()) {
+                    return finalizar_nome(s);
+                }
+            }
+        }
+    }
+
+    finalizar_nome(texto)
+}
+
+fn finalizar_nome(s: &str) -> String {
+    let limpo = s
+        .trim()
+        .trim_matches(|c: char| c == '"' || c == '\'' || c == '.' || c == ':' || c == '*')
+        .trim();
+
+    // Pega só a primeira linha não vazia (alguns modelos quebram com explicação extra)
+    let primeira = limpo.lines().find(|l| !l.trim().is_empty()).unwrap_or(limpo).trim();
+
+    // Limita a 5 palavras, máx 80 chars
+    let palavras: Vec<&str> = primeira.split_whitespace().take(5).collect();
+    let resultado = palavras.join(" ");
+    if resultado.len() > 80 {
+        resultado.chars().take(80).collect()
+    } else {
+        resultado
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sanitizar_nome_texto_puro() {
+        assert_eq!(sanitizar_nome_cluster("Documentos Fiscais"), "Documentos Fiscais");
+    }
+
+    #[test]
+    fn sanitizar_nome_com_aspas() {
+        assert_eq!(sanitizar_nome_cluster("\"Projeto Alpha\""), "Projeto Alpha");
+    }
+
+    #[test]
+    fn sanitizar_nome_de_json() {
+        let raw = r#"{ "arquivos": [{"arquivo":"x.pdf"}], "nome": "Revisão Bibliográfica TCC" }"#;
+        assert_eq!(sanitizar_nome_cluster(raw), "Revisão Bibliográfica TCC");
+    }
+
+    #[test]
+    fn sanitizar_nome_limita_5_palavras() {
+        let raw = "Documentos do projeto alpha de finanças trimestre 2024";
+        let r = sanitizar_nome_cluster(raw);
+        assert_eq!(r.split_whitespace().count(), 5);
+    }
+
+    #[test]
+    fn sanitizar_nome_remove_think_block() {
+        let raw = "<think>vou pensar...</think>Projeto Alpha";
+        assert_eq!(sanitizar_nome_cluster(raw), "Projeto Alpha");
+    }
+
+    #[test]
+    fn sanitizar_nome_pega_primeira_linha() {
+        let raw = "TCC Bibliografia\n\nExplicação extra que deve ser ignorada.";
+        assert_eq!(sanitizar_nome_cluster(raw), "TCC Bibliografia");
+    }
 
     #[test]
     fn parse_entidades_json_valido() {

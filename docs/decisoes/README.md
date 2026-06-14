@@ -75,6 +75,8 @@ ADR-010-estrategia-de-snapshot-e-rollback.md
 | ADR-021 | Cliente Ollama: reqwest com structs próprias (M2) | Aceito |
 | ADR-022 | Clusterização: threshold de similaridade de cosseno (M2) | Aceito |
 | ADR-023 | LLM usado somente na geração de sugestões (Marco 3) | Aceito |
+| ADR-024 | Limiar de confiança mínima para sugestões: 0,50 (M3) | Aceito |
+| ADR-025 | Algoritmo do Motor de Sugestões: cluster-based + LLM naming (M3) | Aceito |
 
 ---
 

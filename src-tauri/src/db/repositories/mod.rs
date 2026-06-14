@@ -3,3 +3,4 @@ pub mod embeddings;
 pub mod entities;
 pub mod files;
 pub mod relationships;
+pub mod sugestoes;

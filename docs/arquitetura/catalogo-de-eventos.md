@@ -107,6 +107,8 @@ Escaneamento concluído.
 
 Falha no escaneamento.
 
+`payload`: `{ "scanId": "Uuid", "error": "string" }`
+
 ---
 
 ## ScanCancelled
@@ -146,6 +148,8 @@ Indexação concluída.
 ## IndexingFailed
 
 Falha na indexação.
+
+`payload`: `{ "indexingId": "Uuid", "error": "string" }`
 
 ---
 
@@ -297,19 +301,31 @@ Falha na construção.
 
 Geração iniciada.
 
+`payload`: `{ "suggestionGenerationId": "Uuid", "total": "number" }`
+
 ---
 
 ## SuggestionCreated
 
 Sugestão criada.
 
-`payload`: `{ "suggestionId": "Uuid", "confianca": "Confidence" }`
+`payload`: `{ "suggestionId": "Uuid", "titulo": "string", "confianca": "Confidence" }`
 
 ---
 
 ## SuggestionGenerationCompleted
 
 Geração concluída.
+
+`payload`: `{ "suggestionGenerationId": "Uuid", "stats": { "geradas": "number", "descartadas": "number", "durationMs": "number" } }`
+
+---
+
+## SuggestionGenerationFailed
+
+Falha fatal durante a geração.
+
+`payload`: `{ "suggestionGenerationId": "Uuid", "error": "string" }`
 
 ---
 
@@ -503,7 +519,7 @@ Exploração concluída.
 | Indexação | IndexingStarted | IndexingProgress | IndexingCompleted / Failed / Cancelled |
 | Análise | AnalysisStarted | eventos de subprocesso | AnalysisCompleted / Failed |
 | Grafo | GraphBuildStarted | NodeCreated / RelationCreated | GraphBuildCompleted / Failed |
-| Sugestões | SuggestionGenerationStarted | SuggestionCreated | SuggestionGenerationCompleted |
+| Sugestões | SuggestionGenerationStarted | SuggestionCreated | SuggestionGenerationCompleted / Failed |
 | Execução | ExecutionStarted | ExecutionProgress | ExecutionCompleted / Failed / Cancelled |
 | Rollback | RollbackStarted | RollbackProgress | RollbackCompleted / Failed / Cancelled |
 | Busca | SearchStarted | — | SearchCompleted / Empty |

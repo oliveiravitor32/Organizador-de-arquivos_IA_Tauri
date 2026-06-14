@@ -26,6 +26,10 @@ pub trait ServicoIa: Send + Sync {
         entidades: &[String],
     ) -> AppResult<Vec<RelacaoInferida>>;
 
+    /// Gera um nome curto (≤ 5 palavras) para um cluster a partir dos nomes dos arquivos membros.
+    /// Recebe até MAX_FILES_LLM_NAMING nomes (os mais representativos do cluster).
+    async fn gerar_nome_cluster(&self, nomes_arquivos: Vec<String>) -> AppResult<String>;
+
     /// Verifica se o Ollama está rodando e se os dois modelos estão disponíveis.
     async fn verificar_saude(&self) -> AppResult<()>;
 }

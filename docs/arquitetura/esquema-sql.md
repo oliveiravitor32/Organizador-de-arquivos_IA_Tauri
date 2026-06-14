@@ -212,25 +212,27 @@ CREATE TABLE cluster_members (
 
 ```sql
 CREATE TABLE suggestions (
-    id         TEXT PRIMARY KEY,
-    type       TEXT NOT NULL
-        CHECK (type IN (
-            'move_file',
-            'rename_file',
-            'create_folder',
-            'merge_cluster'
+    id          TEXT PRIMARY KEY,
+    tipo        TEXT NOT NULL
+        CHECK (tipo IN (
+            'agrupamento',
+            'mover_arquivo',
+            'renomear_arquivo',
+            'criar_pasta'
         )),
-    title      TEXT,
-    reason     TEXT,
-    confidence REAL,
-    status     TEXT NOT NULL DEFAULT 'pending'
+    titulo      TEXT,
+    descricao   TEXT,
+    confianca   REAL,
+    status      TEXT NOT NULL DEFAULT 'pendente'
         CHECK (status IN (
-            'pending',
-            'approved',
-            'rejected',
-            'executed'
+            'pendente',
+            'aceita',
+            'rejeitada',
+            'executada'
         )),
-    created_at TEXT
+    cluster_id  TEXT REFERENCES clusters(id),
+    evidencias  TEXT, -- JSON array de evidências; preenchido no Marco 3
+    criado_em   TEXT
 );
 ```
 
@@ -238,12 +240,14 @@ CREATE TABLE suggestions (
 
 # Tabela: suggestion_operations
 
+Armazena as operações concretas a executar quando a sugestão for aprovada (Marco 4).
+
 ```sql
 CREATE TABLE suggestion_operations (
     id             TEXT PRIMARY KEY,
     suggestion_id  TEXT NOT NULL,
-    operation_type TEXT NOT NULL,
-    payload        TEXT NOT NULL, -- JSON
+    tipo_operacao  TEXT NOT NULL,
+    payload        TEXT NOT NULL, -- JSON com detalhes da operação
     FOREIGN KEY (suggestion_id) REFERENCES suggestions(id) ON DELETE CASCADE
 );
 ```

@@ -3,3 +3,4 @@
 pub mod conhecimento;
 pub mod ia;
 pub mod indexacao;
+pub mod sugestoes;

@@ -131,6 +131,17 @@ impl<'a> FileRepository<'a> {
         Ok(())
     }
 
+    /// Retorna um arquivo por id.
+    pub async fn find_by_id(&self, file_id: &str) -> AppResult<Option<FileRecord>> {
+        let row = sqlx::query_as::<_, FileRecord>(
+            "SELECT id, path, relative_path, name, extension, size, hash, mime_type, scan_id, status, created_at, modified_at, indexed_at FROM files WHERE id = ?",
+        )
+        .bind(file_id)
+        .fetch_optional(self.pool)
+        .await?;
+        Ok(row)
+    }
+
     /// Retorna arquivos com status pending_analysis, opcionalmente filtrados por ids.
     pub async fn find_pending_analysis(
         &self,

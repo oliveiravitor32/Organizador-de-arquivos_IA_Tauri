@@ -51,8 +51,10 @@ export function onScanCompleted(cb: (p: ScanCompletedPayload) => void): Promise<
   return listen<ScanCompletedPayload>("scan://completed", (e) => cb(e.payload));
 }
 
-export function onScanFailed(cb: (p: { scanId: string }) => void): Promise<UnlistenFn> {
-  return listen<{ scanId: string }>("scan://failed", (e) => cb(e.payload));
+export function onScanFailed(
+  cb: (p: { scanId: string; error: string }) => void,
+): Promise<UnlistenFn> {
+  return listen<{ scanId: string; error: string }>("scan://failed", (e) => cb(e.payload));
 }
 
 export function onScanCancelled(cb: (p: { scanId: string }) => void): Promise<UnlistenFn> {
@@ -69,8 +71,10 @@ export function onIndexingCompleted(
   return listen<IndexingCompletedPayload>("indexing://completed", (e) => cb(e.payload));
 }
 
-export function onIndexingFailed(cb: (p: { indexingId: string }) => void): Promise<UnlistenFn> {
-  return listen<{ indexingId: string }>("indexing://failed", (e) => cb(e.payload));
+export function onIndexingFailed(
+  cb: (p: { indexingId: string; error: string }) => void,
+): Promise<UnlistenFn> {
+  return listen<{ indexingId: string; error: string }>("indexing://failed", (e) => cb(e.payload));
 }
 
 // ── Marco 2 — Eventos de Análise ─────────────────────────────────────────────
@@ -121,5 +125,54 @@ export function onAnalysisFailed(
 ): Promise<UnlistenFn> {
   return listen<{ analysisId: string; error: string }>("analysis://failed", (e) =>
     cb(e.payload),
+  );
+}
+
+// ── Marco 3 — Eventos de Sugestões ───────────────────────────────────────────
+
+export interface SuggestionStartedPayload {
+  suggestionGenerationId: string;
+  total: number;
+}
+
+export interface SuggestionCreatedPayload {
+  suggestionId: string;
+  titulo: string;
+  confianca: number;
+}
+
+export interface SuggestionCompletedPayload {
+  suggestionGenerationId: string;
+  stats: {
+    geradas: number;
+    descartadas: number;
+    durationMs: number;
+  };
+}
+
+export function onSuggestionStarted(
+  cb: (p: SuggestionStartedPayload) => void,
+): Promise<UnlistenFn> {
+  return listen<SuggestionStartedPayload>("suggestion://started", (e) => cb(e.payload));
+}
+
+export function onSuggestionCreated(
+  cb: (p: SuggestionCreatedPayload) => void,
+): Promise<UnlistenFn> {
+  return listen<SuggestionCreatedPayload>("suggestion://created", (e) => cb(e.payload));
+}
+
+export function onSuggestionCompleted(
+  cb: (p: SuggestionCompletedPayload) => void,
+): Promise<UnlistenFn> {
+  return listen<SuggestionCompletedPayload>("suggestion://completed", (e) => cb(e.payload));
+}
+
+export function onSuggestionFailed(
+  cb: (p: { suggestionGenerationId: string; error: string }) => void,
+): Promise<UnlistenFn> {
+  return listen<{ suggestionGenerationId: string; error: string }>(
+    "suggestion://failed",
+    (e) => cb(e.payload),
   );
 }

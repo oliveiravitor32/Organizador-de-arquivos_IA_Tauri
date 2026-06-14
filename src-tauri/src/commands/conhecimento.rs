@@ -7,6 +7,7 @@ use uuid::Uuid;
 
 use crate::core::state::AppState;
 use crate::error::AppResult;
+use crate::events;
 use crate::services::conhecimento::analise::AnaliseService;
 use crate::services::ia::ollama::{OllamaService, DEFAULT_EMBED_MODEL};
 
@@ -30,7 +31,7 @@ pub async fn analisar_arquivos(
         let result = svc.analisar(&app_clone, file_ids, &analysis_id_clone).await;
         if let Err(e) = result {
             let _ = app_clone.emit(
-                "analysis://failed",
+                events::ANALYSIS_FAILED,
                 serde_json::json!({ "analysisId": analysis_id_clone, "error": e.to_string() }),
             );
         }

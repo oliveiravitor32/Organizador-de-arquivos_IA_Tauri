@@ -41,8 +41,8 @@ export function Descoberta() {
         onScanCompleted((p) => {
           if (montado) store.setScanCompleted(p);
         }),
-        onScanFailed(() => {
-          if (montado) store.setError(d.erroScan);
+        onScanFailed((p) => {
+          if (montado) store.setError(p.error || d.erroScan);
         }),
         onScanCancelled(() => {
           if (montado) store.setCancelled();
@@ -53,8 +53,8 @@ export function Descoberta() {
         onIndexingCompleted((p) => {
           if (montado) store.setIndexingCompleted(p);
         }),
-        onIndexingFailed(() => {
-          if (montado) store.setError(d.erroIndexacao);
+        onIndexingFailed((p) => {
+          if (montado) store.setError(p.error || d.erroIndexacao);
         }),
       ]);
       unlistenRefs.current = fns;

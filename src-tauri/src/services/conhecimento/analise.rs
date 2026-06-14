@@ -13,6 +13,7 @@ use crate::db::repositories::files::FileRepository;
 use crate::domain::arquivo::FileStatus;
 use crate::domain::conhecimento::AnaliseStats;
 use crate::error::AppResult;
+use crate::events;
 use crate::services::ia::ServicoIa;
 use crate::services::conhecimento::{
     clusters::ClusterService,
@@ -50,7 +51,7 @@ impl AnaliseService {
         let total = arquivos.len();
         let started = std::time::Instant::now();
 
-        let _ = app.emit("analysis://started", serde_json::json!({
+        let _ = app.emit(events::ANALYSIS_STARTED, serde_json::json!({
             "analysisId": analysis_id,
             "total": total
         }));
@@ -62,7 +63,7 @@ impl AnaliseService {
         let embed_svc = EmbeddingService::new(&self.pool, self.ia.as_ref(), &self.embed_model);
 
         for (i, arquivo) in arquivos.iter().enumerate() {
-            let _ = app.emit("analysis://progress", serde_json::json!({
+            let _ = app.emit(events::ANALYSIS_PROGRESS, serde_json::json!({
                 "analysisId": analysis_id,
                 "processed": i,
                 "total": total,
@@ -78,7 +79,7 @@ impl AnaliseService {
                 }
             };
 
-            let _ = app.emit("analysis://embedding_generation_started", serde_json::json!({
+            let _ = app.emit(events::ANALYSIS_EMBEDDING_GENERATION_STARTED, serde_json::json!({
                 "fileId": arquivo.id
             }));
 
@@ -101,7 +102,7 @@ impl AnaliseService {
         let cluster_svc = ClusterService::new(&self.pool, &self.embed_model);
         let clusters_criados = cluster_svc.recalcular().await.unwrap_or(0) as u64;
 
-        let _ = app.emit("analysis://graph_updated", serde_json::json!({
+        let _ = app.emit(events::ANALYSIS_GRAPH_UPDATED, serde_json::json!({
             "analysisId": analysis_id
         }));
 
@@ -114,7 +115,7 @@ impl AnaliseService {
             duration_ms,
         };
 
-        let _ = app.emit("analysis://completed", serde_json::json!({
+        let _ = app.emit(events::ANALYSIS_COMPLETED, serde_json::json!({
             "analysisId": analysis_id,
             "stats": {
                 "processados": stats.processados,

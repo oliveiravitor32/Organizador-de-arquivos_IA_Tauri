@@ -113,7 +113,12 @@ Transformar conhecimento em recomendações explicáveis.
 
 ## Entregável
 
-O sistema apresenta sugestões com justificativa, evidências e confiança.
+O sistema apresenta sugestões de agrupamento com justificativa por template, nome gerado via LLM (1 chamada por cluster) e confiança mínima 0,50.
+
+## Decisões
+
+- ADR-024 — Limiar de confiança mínima: 0,50
+- ADR-025 — Algoritmo do motor: cluster-based + LLM para nomeação, templates para justificativa, tipo `agrupamento` apenas
 
 ---
 

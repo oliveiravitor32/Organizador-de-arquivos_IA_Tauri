@@ -107,35 +107,7 @@ CREATE TABLE cluster_members (
     CHECK (file_id IS NOT NULL OR entity_id IS NOT NULL)
 );
 
-CREATE TABLE suggestions (
-    id         TEXT PRIMARY KEY,
-    type       TEXT NOT NULL
-        CHECK (type IN (
-            'move_file',
-            'rename_file',
-            'create_folder',
-            'merge_cluster'
-        )),
-    title      TEXT,
-    reason     TEXT,
-    confidence REAL,
-    status     TEXT NOT NULL DEFAULT 'pending'
-        CHECK (status IN (
-            'pending',
-            'approved',
-            'rejected',
-            'executed'
-        )),
-    created_at TEXT
-);
-
-CREATE TABLE suggestion_operations (
-    id             TEXT PRIMARY KEY,
-    suggestion_id  TEXT NOT NULL,
-    operation_type TEXT NOT NULL,
-    payload        TEXT NOT NULL,
-    FOREIGN KEY (suggestion_id) REFERENCES suggestions(id) ON DELETE CASCADE
-);
+-- Tabelas de sugestões criadas na migration 0004 (Marco 3).
 
 CREATE TABLE snapshots (
     id           TEXT PRIMARY KEY,
@@ -179,7 +151,6 @@ CREATE INDEX idx_file_entities_entity   ON file_entities(entity_id);
 CREATE INDEX idx_relationships_source   ON relationships(source_entity_id);
 CREATE INDEX idx_relationships_target   ON relationships(target_entity_id);
 CREATE INDEX idx_clusters_name          ON clusters(name);
-CREATE INDEX idx_suggestions_status     ON suggestions(status);
 CREATE INDEX idx_snapshots_execution    ON snapshots(execution_id);
 CREATE INDEX idx_operations_snapshot    ON operations(snapshot_id);
 CREATE INDEX idx_operations_execution   ON operations(execution_id);

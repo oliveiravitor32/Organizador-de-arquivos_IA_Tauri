@@ -222,9 +222,9 @@ describe("Descoberta — UC-001 CA-002: erro durante scan", () => {
     vi.mocked(open).mockResolvedValue("/home/usuario/documentos");
     vi.mocked(escanearDiretorio).mockResolvedValue({ scanId: "scan-err" });
 
-    let scanFailedCb: (() => void) | undefined;
+    let scanFailedCb: ((p: { scanId: string; error: string }) => void) | undefined;
     vi.mocked(onScanFailed).mockImplementation((cb) => {
-      scanFailedCb = cb as () => void;
+      scanFailedCb = cb;
       return Promise.resolve(() => {});
     });
 
@@ -236,10 +236,12 @@ describe("Descoberta — UC-001 CA-002: erro durante scan", () => {
 
     await waitFor(() => expect(scanFailedCb).toBeDefined());
 
-    act(() => { scanFailedCb!(); });
+    act(() => {
+      scanFailedCb!({ scanId: "scan-err", error: "permissão negada em /var" });
+    });
 
     await waitFor(() =>
-      expect(screen.getByText(/erro/i)).toBeInTheDocument(),
+      expect(screen.getByText(/permissão negada em \/var/i)).toBeInTheDocument(),
     );
   });
 
@@ -362,14 +364,16 @@ describe("Descoberta — UC-002 CA-006: resultado da indexação", () => {
     vi.mocked(indexarArquivos).mockResolvedValue({ indexingId: "idx-err" });
 
     let scanCompletedCb: ((p: unknown) => void) | undefined;
-    let indexingFailedCb: (() => void) | undefined;
+    let indexingFailedCb:
+      | ((p: { indexingId: string; error: string }) => void)
+      | undefined;
 
     vi.mocked(onScanCompleted).mockImplementation((cb) => {
       scanCompletedCb = cb as (p: unknown) => void;
       return Promise.resolve(() => {});
     });
     vi.mocked(onIndexingFailed).mockImplementation((cb) => {
-      indexingFailedCb = cb as () => void;
+      indexingFailedCb = cb;
       return Promise.resolve(() => {});
     });
 
@@ -393,10 +397,12 @@ describe("Descoberta — UC-002 CA-006: resultado da indexação", () => {
     fireEvent.click(screen.getByRole("button", { name: /indexar arquivos/i }));
     await waitFor(() => expect(indexingFailedCb).toBeDefined());
 
-    act(() => { indexingFailedCb!(); });
+    act(() => {
+      indexingFailedCb!({ indexingId: "idx-err", error: "disco cheio" });
+    });
 
     await waitFor(() =>
-      expect(screen.getByText(/erro/i)).toBeInTheDocument(),
+      expect(screen.getByText(/disco cheio/i)).toBeInTheDocument(),
     );
   });
 });

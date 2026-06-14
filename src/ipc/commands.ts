@@ -88,3 +88,48 @@ export function analisarArquivos(
     fileIds: fileIds ?? null,
   });
 }
+
+// ── Marco 3 — Sugestões ───────────────────────────────────────────────────────
+
+export interface GerarSugestoesResult {
+  suggestionGenerationId: string;
+}
+
+export interface ExplicarSugestaoResult {
+  suggestionId: string;
+  tipo: string;
+  titulo: string | null;
+  justificativa: string;
+  evidencias: Array<{ tipo: string; valor: string }>;
+  confianca: number;
+  desatualizada: boolean;
+  operacoes: number;
+  arquivos: Array<{ id: string; nome: string; caminho: string }>;
+}
+
+export interface SugestaoItem {
+  id: string;
+  tipo: string;
+  titulo: string | null;
+  confianca: number | null;
+  status: string;
+}
+
+export interface ListarSugestoesResult {
+  sugestoes: SugestaoItem[];
+}
+
+/** Inicia a geração de sugestões a partir dos clusters existentes (UC-005). */
+export function gerarSugestoes(): Promise<GerarSugestoesResult> {
+  return invoke<GerarSugestoesResult>("gerar_sugestoes");
+}
+
+/** Retorna a explicação detalhada de uma sugestão (UC-012). */
+export function explicarSugestao(suggestionId: string): Promise<ExplicarSugestaoResult> {
+  return invoke<ExplicarSugestaoResult>("explicar_sugestao", { suggestionId });
+}
+
+/** Lista sugestões, opcionalmente filtradas por status. */
+export function listarSugestoes(status?: string): Promise<ListarSugestoesResult> {
+  return invoke<ListarSugestoesResult>("listar_sugestoes", { status: status ?? null });
+}

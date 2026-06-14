@@ -5,6 +5,7 @@ import type { UnlistenFn } from "@tauri-apps/api/event";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Analise } from "@/features/conhecimento/Analise";
 import { Descoberta } from "@/features/descoberta/Descoberta";
+import { Sugestoes } from "@/features/sugestoes/Sugestoes";
 import { useTranslations } from "@/i18n";
 import { announceReady } from "@/ipc/commands";
 import { onReady } from "@/ipc/events";
@@ -47,6 +48,7 @@ function App() {
 
       <Descoberta />
       <Analise />
+      <Sugestoes />
     </main>
   );
 }

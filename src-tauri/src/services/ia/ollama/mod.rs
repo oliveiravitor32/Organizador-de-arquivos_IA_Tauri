@@ -60,6 +60,11 @@ impl ServicoIa for OllamaService {
             .await
     }
 
+    async fn gerar_nome_cluster(&self, nomes_arquivos: Vec<String>) -> AppResult<String> {
+        generate::gerar_nome_cluster(&self.client, &self.base_url, &self.llm_model, nomes_arquivos)
+            .await
+    }
+
     async fn verificar_saude(&self) -> AppResult<()> {
         health::verificar(&self.client, &self.base_url, &self.llm_model, &self.embed_model).await
     }
